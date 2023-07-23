@@ -1,6 +1,8 @@
 import 'package:electrobike_app_v1/pages/home.dart';
 import 'package:flutter/material.dart';
 
+
+
 class FormularioInicioSesion extends StatelessWidget {
   final azul = 0xFF118dd5;
 
@@ -60,11 +62,11 @@ class FormularioInicioSesion extends StatelessWidget {
                 ),
                 child: Text('Iniciar Sesion'),
                 onPressed: () {
-                  print('Hola');
+                  print('inicia sesion');
                   // Navegar a la siguiente página cuando el botón sea presionado
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => home()),
+                    MaterialPageRoute(builder: (context) => Home()),
                   );
                 },
               ),
