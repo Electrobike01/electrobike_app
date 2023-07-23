@@ -1,6 +1,6 @@
 import 'package:electrobike_app_v1/pages/listarProductos.dart';
 import 'package:electrobike_app_v1/widgets/appBar.dart';
-import 'package:electrobike_app_v1/widgets/barraNav.dart';
+// import 'package:electrobike_app_v1/widgets/barraNav.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 
@@ -31,24 +31,7 @@ class _HomeState extends State<Home> {
           ],
         ),
       ),
-        bottomNavigationBar: GNav(
-          selectedIndex: _currentIndex,
-          tabs: [
-            GButton(
-              icon: Icons.home,
-              text: 'Home',
-              // iconActiveColor: Colors.white,
-              // textColor: Colors.grey,
-            ),
-          
-            GButton(
-              icon: Icons.home,
-              text: 'Productos',
-              // iconActiveColor: Colors.white,
-              // textColor: Colors.grey,
-            ),
-          ],
-        )
+     
     );
     
   }
