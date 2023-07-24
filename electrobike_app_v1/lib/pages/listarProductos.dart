@@ -1,6 +1,4 @@
-import 'package:electrobike_app_v1/pages/home.dart';
 import 'package:electrobike_app_v1/widgets/appBar.dart';
-import 'package:electrobike_app_v1/widgets/barraNav.dart';
 import 'package:flutter/material.dart';
 
 
@@ -23,7 +21,7 @@ class _HomeState extends State<ListarProductos> {
           Text('Aqui va el listar Productos'),
         ],
       ),
-  // bottomNavigationBar: barraNav(), // Aquí usamos el widget barraNav
+  
     );
   }
 }

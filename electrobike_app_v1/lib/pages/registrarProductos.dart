@@ -1,4 +1,4 @@
-import 'package:electrobike_app_v1/widgets/barraNav.dart';
+// import 'package:electrobike_app_v1/widgets/barraNav.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(const MyApp());
