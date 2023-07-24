@@ -2,6 +2,9 @@ import 'package:electrobike_app_v1/pages/dashboard.dart';
 import 'package:electrobike_app_v1/pages/listarProductos.dart';
 import 'package:flutter/material.dart';
 
+const azul = 0xFF118dd5;
+const gris = 0xFF1d1d1b;
+
 
 class Home extends StatefulWidget {
   @override
@@ -31,7 +34,7 @@ class _HomeState extends State<Home> {
                   unselectedItemColor: Colors.grey,
                   showSelectedLabels: true,
                   showUnselectedLabels: false,
-                  backgroundColor: Colors.black,
+                  backgroundColor: Color(gris),
                   currentIndex: _pageIndex,
                   onTap: (int index) {
                     setState(() {
@@ -40,11 +43,11 @@ class _HomeState extends State<Home> {
                   },
                   items: [
                     BottomNavigationBarItem(
-                      icon: Icon(Icons.home),
+                      icon: Icon(Icons.home_outlined),
                       label: 'Dashboard',
                     ),
                     BottomNavigationBarItem(
-                      icon: Icon(Icons.check_box),
+                      icon: Icon(Icons.directions_bike_outlined),
                       label: 'Productos',
                     ),
                   ],

@@ -1,5 +1,7 @@
+import 'package:electrobike_app_v1/widgets/appBar_2.dart';
 import 'package:flutter/material.dart';
 
+const gris = 0xFF1d1d1b;
 void main() => runApp(const VerPerfil());
 
 class VerPerfil extends StatelessWidget {
@@ -7,15 +9,26 @@ class VerPerfil extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Material App',
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Material App Bar'),
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Color(gris),
+        automaticallyImplyLeading:
+            true, // Esto evita que se muestre la flecha de retroceso
+        title: Text('ELECTROBIKE'),
+        toolbarHeight: 65, // Cambiar esta línea al valor deseado (en píxeles)
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back, 
+            color: Colors.white, 
+          ),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
         ),
-        body: const Center(
-          child: Text('Ver perfil '),
-        ),
+      ),
+      body: const Center(
+        child: Text('Ver perfil '),
       ),
     );
   }

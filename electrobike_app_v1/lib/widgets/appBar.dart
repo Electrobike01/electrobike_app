@@ -12,7 +12,7 @@ enum MenuItemButton {
 
 class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
-  Size get preferredSize => Size.fromHeight(kToolbarHeight);
+  Size get preferredSize => Size.fromHeight(65); // Tamaño preferido del AppBar
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +49,7 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
               child: Icon(
                 Icons.person,
                 size: 30,
-                color: Color(azul),
+                color: Color(gris),
               ),
               backgroundColor: Colors.white
             ),
@@ -58,4 +58,6 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
       ],
     );
   }
+  
+
 }
