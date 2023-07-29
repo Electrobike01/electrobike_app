@@ -1,21 +1,198 @@
-// import 'package:electrobike_app_v1/widgets/barraNav.dart';
+import 'package:electrobike_app_v1/controllers/controllerProductos.dart';
+import 'package:electrobike_app_v1/models/modeloProductos.dart';
+import 'package:electrobike_app_v1/pages/home.dart';
+import 'package:electrobike_app_v1/pages/listarProductos.dart';
+import 'package:electrobike_app_v1/widgets/appBar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_toastr/flutter_toastr.dart';
+import 'package:select_form_field/select_form_field.dart';
 
-void main() => runApp(const MyApp());
+const gris = 0xFF1d1d1b;
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class RegistrarProductos extends StatefulWidget {
+  const RegistrarProductos({super.key});
+
+  @override
+  State<RegistrarProductos> createState() => _RegistrarProductosState();
+}
+
+class _RegistrarProductosState extends State<RegistrarProductos> {
+  final _formKey = GlobalKey<FormState>();
+
+  TextEditingController nombreProductoController = TextEditingController();
+  TextEditingController categoriaProductoController = TextEditingController();
+
+  final List<Map<String, dynamic>> _items = [
+    {
+      'value': 'Bicicletas alta gama',
+      'label': 'Bicicletas alta gama',
+    },
+    {
+      'value': 'Bicicletas baja gama',
+      'label': 'Bicicletas baja gama',
+    },
+    {
+      'value': 'Repuestos alta gama',
+      'label': 'Repuestos alta gama',
+    },
+    {
+      'value': 'Repuestos baja gama',
+      'label': 'Repuestos baja gama',
+    },
+  ];
+
+  Future<bool> AddProduct(ModeloProducto modeloProducto) async {
+    // bool isUnique = await ControllerProductos().isNameEmailUnique(studentModel.Name, studentModel.Email);
+    // if (!isUnique) {
+    //   FlutterToastr.show(
+    //     "Correo o Nombre ya existentes",
+    //     context,
+    //     duration: FlutterToastr.lengthLong,
+    //     position: FlutterToastr.bottom,
+    //     backgroundColor: Colors.red,
+    //   );
+    //   return false;
+    // }
+
+    await ControllerProductos().addProducto(modeloProducto).then((Success) => {
+          FlutterToastr.show("Producto registrado", context,
+              duration: FlutterToastr.lengthLong,
+              position: FlutterToastr.bottom,
+              backgroundColor: Colors.green),
+          Navigator.of(context).pop()
+        });
+
+    return true;
+  }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Material App',
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Material App Bar'),
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Color(gris),
+        automaticallyImplyLeading: true,
+        title: Text('ELECTROBIKE'),
+        toolbarHeight: 65,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: Colors.white,
+          ),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
         ),
-        body: const Center(
-          child: Text('Aqui va el registrar productos'),
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            SizedBox(height: 30.0),
+            Center(
+              child: Text(
+                'Registrar Producto',
+                style: TextStyle(fontSize: 30.0, fontWeight: FontWeight.bold),
+              ),
+            ),
+            SizedBox(height: 30.0),
+            Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 30.0, vertical: 5.0),
+                    child: TextFormField(
+                      controller: nombreProductoController,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return "Este campo es obligatorio";
+                        }
+                        return null;
+                      },
+                      decoration: InputDecoration(
+                        hintText: 'Ingrese el nombre del producto',
+                        labelText: 'Nombre del producto',
+                        enabledBorder: OutlineInputBorder(
+                          borderSide:
+                              BorderSide(width: 3, color: Colors.blueAccent),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide:
+                              BorderSide(width: 3, color: Colors.blueAccent),
+                        ),
+                        errorBorder: OutlineInputBorder(
+                          borderSide: BorderSide(width: 3, color: Colors.red),
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                          borderSide: BorderSide(width: 3, color: Colors.red),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                      height: 10.0), // Espacio entre los campos del formulario
+                  Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 30.0, vertical: 5.0),
+                      child: SelectFormField(
+                        controller: categoriaProductoController,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Por favor ingrese el tipo de documento';
+                          }
+                          return null;
+                        },
+                        type: SelectFormFieldType.dropdown,
+                        decoration: InputDecoration(
+                          hintText: 'Seleccione la categoria del producto',
+                          labelText: 'Categoria del producto',
+                          enabledBorder: OutlineInputBorder(
+                            borderSide:
+                                BorderSide(width: 3, color: Colors.blueAccent),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide:
+                                BorderSide(width: 3, color: Colors.blueAccent),
+                          ),
+                          errorBorder: OutlineInputBorder(
+                            borderSide: BorderSide(width: 3, color: Colors.red),
+                          ),
+                          focusedErrorBorder: OutlineInputBorder(
+                            borderSide: BorderSide(width: 3, color: Colors.red),
+                          ),
+                        ),
+                        items: _items,
+                        onChanged: (val) => print(val),
+                        onSaved: (val) => print(val),
+                      )),
+                  SizedBox(
+                      height:
+                          20.0), // Espacio entre el DropdownButtonFormField y el botón
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      fixedSize: Size(200.0, 50),
+                      elevation: 20.0,
+                    ),
+                    onPressed: () async {
+                      if (_formKey.currentState!.validate()) {
+                        ModeloProducto modeloProducto = ModeloProducto(
+                          nombreProducto: nombreProductoController.text,
+                          categoriaProducto: categoriaProductoController.text,
+                        );
+                        bool isAdded = await AddProduct(modeloProducto);
+                        if (isAdded) {
+                          nombreProductoController.clear();
+                          nombreProductoController.clear();
+                        }
+                      }
+                    },
+                    child: Text('Save'),
+                  ),
+                ],
+              ),
+            )
+          ],
         ),
       ),
     );
