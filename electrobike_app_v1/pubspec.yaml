@@ -40,6 +40,7 @@ dependencies:
   flutter_slidable: ^3.0.0
   scroll_to_hide_bottom_navigation_bar: ^0.0.1
   select_form_field: ^2.2.0
+  flutter_sticky_header: ^0.6.5
 
 dev_dependencies:
   flutter_test:

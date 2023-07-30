@@ -28,6 +28,14 @@ class ModeloProducto {
       "categoriaProducto": categoriaProducto,
     };
   }
+  
+  Map<String, dynamic> toJsonValidateUpdate() {
+    return {
+      "idProducto": idProducto ,
+      "nombreProducto": nombreProducto,
+      "categoriaProducto": categoriaProducto,
+    };
+  }
 
   Map<String, dynamic> toJsonUpdate() {
     return {

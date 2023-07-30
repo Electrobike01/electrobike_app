@@ -1,3 +1,4 @@
+import 'package:electrobike_app_v1/controllers/controllerProductos.dart';
 import 'package:flutter/material.dart';
 import '../models/modeloProductos.dart';
 import 'package:flutter_toastr/flutter_toastr.dart';
@@ -53,16 +54,45 @@ class _ActualizarProductoState extends State<ActualizarProducto> {
     }
   ];
 
+  // bool?isUnique; 
+
+
+    Future<bool> editProduct(ModeloProducto modeloProducto) async {
+    String idProducto = idProductoController.text;
+    String nombreProducto = nombreProductoController.text.trim();
+    String categoriaProducto = categoriaProductoController.text.trim();
+          
+    bool isUnique = await ControllerProductos().ValidarRepetidosActualizar(idProducto, nombreProducto, categoriaProducto);
+
+    if (!isUnique) {
+      FlutterToastr.show(
+        "El producto ya existe",
+        context,
+        duration: FlutterToastr.lengthLong,
+        position: FlutterToastr.bottom,
+        backgroundColor: Colors.red,
+      );
+      return false;
+    }
+
+    await ControllerProductos().updateProducto(modeloProducto).then((Success) => {
+          FlutterToastr.show("Producto actualizado", context,
+              duration: FlutterToastr.lengthLong,
+              position: FlutterToastr.bottom,
+              backgroundColor: Colors.green),
+          Navigator.of(context).pop()
+        });
+
+    return true;
+  }
+
   @override
   void initState() {
     if (widget.index != Null) {
-      // idProductoController.text = widget.modeloProducto?.idProducto;
+      idProductoController.text =  widget.modeloProducto?.idProducto?.toString() ?? '';
       nombreProductoController.text = widget.modeloProducto?.nombreProducto;
-      categoriaProductoController.text =
-          widget.modeloProducto?.categoriaProducto;
-      cantidadProductoController.text = widget.modeloProducto?.cantidadProducto
-              ?.toString() ??
-          ''; // Usar el operador ?? para proporcionar un valor predeterminado
+      categoriaProductoController.text = widget.modeloProducto?.categoriaProducto;
+      cantidadProductoController.text = widget.modeloProducto?.cantidadProducto?.toString() ?? '';
       estadoProductoController.text = widget.modeloProducto?.estadoProducto;
     }
     super.initState();
@@ -252,17 +282,23 @@ class _ActualizarProductoState extends State<ActualizarProducto> {
                       elevation: 20.0,
                     ),
                     onPressed: () async {
-                      // if (_formKey.currentState!.validate()) {
-                      //   ModeloProducto modeloProducto = ModeloProducto(
-                      //     nombreProducto: nombreProductoController.text.trim(),
-                      //     categoriaProducto: categoriaProductoController.text.trim(),
-                      //   );
-                      //   bool isAdded = await AddProduct(modeloProducto);
-                      //   if (isAdded) {
-                      //     nombreProductoController.clear();
-                      //     categoriaProductoController.clear();
-                      //   }
-                      // }
+                      
+                      if (_formKey.currentState!.validate()) {
+                        ModeloProducto modeloProducto = ModeloProducto(
+                          idProducto: idProductoController.text.trim(),
+                          nombreProducto: nombreProductoController.text.trim(),
+                          cantidadProducto: cantidadProductoController.text.trim(),
+                          categoriaProducto: categoriaProductoController.text.trim(),
+                          estadoProducto: estadoProductoController.text.trim(),
+                        );
+                        bool isAdded = await editProduct(modeloProducto);
+                        if (isAdded) {
+                          nombreProductoController.clear();
+                          cantidadProductoController.clear();
+                          categoriaProductoController.clear();
+                          estadoProductoController.clear();
+                        }
+                      }
                     },
                     child: Text('Save'),
                   ),

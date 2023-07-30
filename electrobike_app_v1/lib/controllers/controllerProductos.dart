@@ -64,4 +64,19 @@ class ControllerProductos {
       return false;
     }
   }
+
+  // Validar nombre y correos repetidos D
+  Future<bool> ValidarRepetidosActualizar(String idProducto, 
+      String nombreProducto, String categoriaProducto) async {
+    final response = await http.get(Uri.parse(
+        // "http://192.168.0.4/apiElectrobike_app/productos/validarRepetidos.php?nombreProducto=$nombreProducto&categoriaProducto=$categoriaProducto"
+        "http://192.168.0.4/apiElectrobike_app/productos/validarActualizar.php?idProducto=$idProducto&nombreProducto=$nombreProducto&categoriaProducto=$categoriaProducto"
+        ));
+    if (response.statusCode == 200 ) {
+      var data = json.decode(response.body);
+      return data['isUnique'];
+    } else {
+      return false;
+    }
+  }
 }
