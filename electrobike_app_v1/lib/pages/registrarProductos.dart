@@ -18,7 +18,6 @@ class RegistrarProductos extends StatefulWidget {
 
 class _RegistrarProductosState extends State<RegistrarProductos> {
   final _formKey = GlobalKey<FormState>();
-
   TextEditingController nombreProductoController = TextEditingController();
   TextEditingController categoriaProductoController = TextEditingController();
 
@@ -42,17 +41,20 @@ class _RegistrarProductosState extends State<RegistrarProductos> {
   ];
 
   Future<bool> AddProduct(ModeloProducto modeloProducto) async {
-    // bool isUnique = await ControllerProductos().isNameEmailUnique(studentModel.Name, studentModel.Email);
-    // if (!isUnique) {
-    //   FlutterToastr.show(
-    //     "Correo o Nombre ya existentes",
-    //     context,
-    //     duration: FlutterToastr.lengthLong,
-    //     position: FlutterToastr.bottom,
-    //     backgroundColor: Colors.red,
-    //   );
-    //   return false;
-    // }
+    String nombreProducto = nombreProductoController.text.trim();
+    String categoriaProducto = categoriaProductoController.text.trim();
+          
+    bool isUnique = await ControllerProductos().ValidarProducto(nombreProducto, categoriaProducto);
+    if (!isUnique) {
+      FlutterToastr.show(
+        "El producto ya existe",
+        context,
+        duration: FlutterToastr.lengthLong,
+        position: FlutterToastr.bottom,
+        backgroundColor: Colors.red,
+      );
+      return false;
+    }
 
     await ControllerProductos().addProducto(modeloProducto).then((Success) => {
           FlutterToastr.show("Producto registrado", context,
@@ -105,7 +107,7 @@ class _RegistrarProductosState extends State<RegistrarProductos> {
                     child: TextFormField(
                       controller: nombreProductoController,
                       validator: (value) {
-                        if (value!.isEmpty) {
+                        if (value!.trim().isEmpty) {
                           return "Este campo es obligatorio";
                         }
                         return null;
@@ -138,15 +140,15 @@ class _RegistrarProductosState extends State<RegistrarProductos> {
                       child: SelectFormField(
                         controller: categoriaProductoController,
                         validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Por favor ingrese el tipo de documento';
+                          if (value == null || value.trim().isEmpty) {
+                            return 'Por favor ingrese la categoría del producto';
                           }
                           return null;
                         },
                         type: SelectFormFieldType.dropdown,
                         decoration: InputDecoration(
-                          hintText: 'Seleccione la categoria del producto',
-                          labelText: 'Categoria del producto',
+                          hintText: 'Seleccione la categoría del producto',
+                          labelText: 'Categoría del producto',
                           enabledBorder: OutlineInputBorder(
                             borderSide:
                                 BorderSide(width: 3, color: Colors.blueAccent),
@@ -177,13 +179,13 @@ class _RegistrarProductosState extends State<RegistrarProductos> {
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
                         ModeloProducto modeloProducto = ModeloProducto(
-                          nombreProducto: nombreProductoController.text,
-                          categoriaProducto: categoriaProductoController.text,
+                          nombreProducto: nombreProductoController.text.trim(),
+                          categoriaProducto: categoriaProductoController.text.trim(),
                         );
                         bool isAdded = await AddProduct(modeloProducto);
                         if (isAdded) {
                           nombreProductoController.clear();
-                          nombreProductoController.clear();
+                          categoriaProductoController.clear();
                         }
                       }
                     },

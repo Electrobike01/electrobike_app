@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:electrobike_app_v1/controllers/controllerProductos.dart';
 import 'package:electrobike_app_v1/models/modeloProductos.dart';
+import 'package:electrobike_app_v1/pages/editarProducto.dart';
 import 'package:electrobike_app_v1/pages/registrarProductos.dart';
 import 'package:electrobike_app_v1/widgets/appBar.dart';
 import 'package:flutter/material.dart';
@@ -51,13 +52,15 @@ class _ListarProductosState extends State<ListarProductos> {
                 itemBuilder: ((context, index) {
                   ModeloProducto producto = listaProductos[index];
                   return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20.0, vertical: 5.0),
                     child: Card(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0),
                       ),
                       elevation: 5.0,
                       child: ListTile(
+                        // leading: CircleAvatar(child: Text(producto.nombreProducto[0]),),
                         title: Text(
                           producto.nombreProducto,
                           style: TextStyle(
@@ -79,8 +82,25 @@ class _ListarProductosState extends State<ListarProductos> {
                             Text(
                               'Estado: ${producto.estadoProducto}',
                               style: TextStyle(color: Colors.blue),
-                            )
+                            ),
                           ],
+                        ),
+                        trailing: IconButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ActualizarProducto(
+                                    modeloProducto: producto,
+                                    index: index
+                                  )),
+                            );
+                            print('Actualizar');
+                          },
+                          icon: Icon(
+                            Icons.edit,
+                            color: Color(azul),
+                          ),
                         ),
                       ),
                     ),
@@ -95,7 +115,8 @@ class _ListarProductosState extends State<ListarProductos> {
         ),
       ),
       floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 85.0), // Ajusta la distancia aquí
+        padding:
+            const EdgeInsets.only(bottom: 85.0), // Ajusta la distancia aquí
         child: FloatingActionButton(
           onPressed: () {
             // Acción cuando se presiona el FAB
@@ -109,7 +130,6 @@ class _ListarProductosState extends State<ListarProductos> {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-
     );
   }
 }

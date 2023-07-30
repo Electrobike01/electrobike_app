@@ -28,4 +28,14 @@ class ModeloProducto {
       "categoriaProducto": categoriaProducto,
     };
   }
+
+  Map<String, dynamic> toJsonUpdate() {
+    return {
+      "idProducto": idProducto,
+      "nombreProducto": nombreProducto,
+      "cantidadProducto": cantidadProducto,
+      "categoriaProducto": categoriaProducto,
+      "estadoProducto": estadoProducto,
+    };
+  }
 }
