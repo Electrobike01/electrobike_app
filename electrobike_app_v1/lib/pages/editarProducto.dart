@@ -82,8 +82,8 @@ class _ActualizarProductoState extends State<ActualizarProducto> {
               duration: FlutterToastr.lengthLong,
               position: FlutterToastr.bottom,
               backgroundColor: Colors.green),
-          // Navigator.of(context).pop()
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: ((context) => ListarProductos())))
+          Navigator.pop(context, true)
+          // Navigator.pushReplacement(context, MaterialPageRoute(builder: ((context) => ListarProductos())))
         });
 
     return true;
