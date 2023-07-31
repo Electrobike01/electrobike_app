@@ -4,6 +4,8 @@ import '../models/modeloProductos.dart';
 import 'package:flutter_toastr/flutter_toastr.dart';
 import 'package:select_form_field/select_form_field.dart';
 
+import 'listarProductos.dart';
+
 const gris = 0xFF1d1d1b;
 
 class ActualizarProducto extends StatefulWidget {
@@ -80,7 +82,8 @@ class _ActualizarProductoState extends State<ActualizarProducto> {
               duration: FlutterToastr.lengthLong,
               position: FlutterToastr.bottom,
               backgroundColor: Colors.green),
-          Navigator.of(context).pop()
+          // Navigator.of(context).pop()
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: ((context) => ListarProductos())))
         });
 
     return true;

@@ -7,7 +7,8 @@ void main() => runApp(
   MaterialApp(
     debugShowCheckedModeBanner: false,
     routes:{
-      '/':((context)=>Login())
+      '/':((context)=>Login()),
+      '/listarProductos': (context) => ListarProductos(),
     },
 
   ),
