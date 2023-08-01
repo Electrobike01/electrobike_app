@@ -25,6 +25,7 @@ class _ActualizarProductoState extends State<ActualizarProducto> {
   TextEditingController cantidadProductoController = TextEditingController();
   TextEditingController categoriaProductoController = TextEditingController();
   TextEditingController estadoProductoController = TextEditingController();
+  int cantidadProducto = 0;
 
   final List<Map<String, dynamic>> _items = [
     {
@@ -56,15 +57,15 @@ class _ActualizarProductoState extends State<ActualizarProducto> {
     }
   ];
 
-  // bool?isUnique; 
+  // bool?isUnique;
 
-
-    Future<bool> editProduct(ModeloProducto modeloProducto) async {
+  Future<bool> editProduct(ModeloProducto modeloProducto) async {
     String idProducto = idProductoController.text;
     String nombreProducto = nombreProductoController.text.trim();
     String categoriaProducto = categoriaProductoController.text.trim();
-          
-    bool isUnique = await ControllerProductos().ValidarRepetidosActualizar(idProducto, nombreProducto, categoriaProducto);
+
+    bool isUnique = await ControllerProductos().ValidarRepetidosActualizar(
+        idProducto, nombreProducto, categoriaProducto);
 
     if (!isUnique) {
       FlutterToastr.show(
@@ -77,14 +78,15 @@ class _ActualizarProductoState extends State<ActualizarProducto> {
       return false;
     }
 
-    await ControllerProductos().updateProducto(modeloProducto).then((Success) => {
-          FlutterToastr.show("Producto actualizado", context,
-              duration: FlutterToastr.lengthLong,
-              position: FlutterToastr.bottom,
-              backgroundColor: Colors.green),
-          Navigator.pop(context, true)
-          // Navigator.pushReplacement(context, MaterialPageRoute(builder: ((context) => ListarProductos())))
-        });
+    await ControllerProductos()
+        .updateProducto(modeloProducto)
+        .then((Success) => {
+              FlutterToastr.show("Producto actualizado", context,
+                  duration: FlutterToastr.lengthLong,
+                  position: FlutterToastr.bottom,
+                  backgroundColor: Colors.green),
+              Navigator.pop(context, true)
+            });
 
     return true;
   }
@@ -92,10 +94,15 @@ class _ActualizarProductoState extends State<ActualizarProducto> {
   @override
   void initState() {
     if (widget.index != Null) {
-      idProductoController.text =  widget.modeloProducto?.idProducto?.toString() ?? '';
+      idProductoController.text =
+          widget.modeloProducto?.idProducto?.toString() ?? '';
       nombreProductoController.text = widget.modeloProducto?.nombreProducto;
-      categoriaProductoController.text = widget.modeloProducto?.categoriaProducto;
-      cantidadProductoController.text = widget.modeloProducto?.cantidadProducto?.toString() ?? '';
+      categoriaProductoController.text =
+          widget.modeloProducto?.categoriaProducto;
+      cantidadProductoController.text =
+          widget.modeloProducto?.cantidadProducto?.toString() ?? '';
+      cantidadProducto =
+          int.parse(widget.modeloProducto?.cantidadProducto?.toString() ?? '0');
       estadoProductoController.text = widget.modeloProducto?.estadoProducto;
     }
     super.initState();
@@ -105,7 +112,7 @@ class _ActualizarProductoState extends State<ActualizarProducto> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(gris),
+        backgroundColor: Color(0xFF118dd5),
         automaticallyImplyLeading: true,
         title: Text('ELECTROBIKE'),
         toolbarHeight: 65,
@@ -219,11 +226,10 @@ class _ActualizarProductoState extends State<ActualizarProducto> {
                         return null;
                       },
                       decoration: InputDecoration(
-                        hintText: 'Ingrese el nombre del producto',
-                        labelText: 'Nombre del producto',
+                        labelText: 'Cantidad del producto',
                         filled: true,
-                        fillColor: Colors.grey[
-                            200], // Establecer el color de fondo para que coincida con un campo deshabilitado
+                        fillColor: Color(
+                            0xFFd6d6d6), // Establecer el color de fondo para que coincida con un campo deshabilitado;
                         enabledBorder: OutlineInputBorder(
                           borderSide:
                               BorderSide(width: 3, color: Colors.blueAccent),
@@ -241,21 +247,26 @@ class _ActualizarProductoState extends State<ActualizarProducto> {
                       ),
                     ),
                   ),
-                      Padding(
+                  Padding(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 30.0, vertical: 5.0),
                     child: SelectFormField(
                       controller: estadoProductoController,
+                      readOnly: cantidadProducto > 0,
+                      
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
-                          return 'Por favor ingrese la categoría del producto';
+                          return 'Por favor seleccione el estado del producto';
                         }
                         return null;
                       },
                       type: SelectFormFieldType.dropdown,
                       decoration: InputDecoration(
-                        hintText: 'Seleccione la categoría del producto',
-                        labelText: 'Categoría del producto',
+                         filled: cantidadProducto > 0,
+                        fillColor: Color(
+                            0xFFd6d6d6),
+                        hintText: 'Seleccione el estado del producto',
+                        labelText: 'Estado del producto',
                         enabledBorder: OutlineInputBorder(
                           borderSide:
                               BorderSide(width: 3, color: Colors.blueAccent),
@@ -285,13 +296,14 @@ class _ActualizarProductoState extends State<ActualizarProducto> {
                       elevation: 20.0,
                     ),
                     onPressed: () async {
-                      
                       if (_formKey.currentState!.validate()) {
                         ModeloProducto modeloProducto = ModeloProducto(
                           idProducto: idProductoController.text.trim(),
                           nombreProducto: nombreProductoController.text.trim(),
-                          cantidadProducto: cantidadProductoController.text.trim(),
-                          categoriaProducto: categoriaProductoController.text.trim(),
+                          cantidadProducto:
+                              cantidadProductoController.text.trim(),
+                          categoriaProducto:
+                              categoriaProductoController.text.trim(),
                           estadoProducto: estadoProductoController.text.trim(),
                         );
                         bool isAdded = await editProduct(modeloProducto);

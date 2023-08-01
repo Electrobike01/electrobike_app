@@ -17,7 +17,7 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: Color(gris),
+      backgroundColor: Color(azul),
       automaticallyImplyLeading: false, // Esto evita que se muestre la flecha de retroceso
       title: Text('ELECTROBIKE'),
       toolbarHeight: 100, // Cambiar esta línea al valor deseado (en píxeles)
@@ -49,7 +49,7 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
               child: Icon(
                 Icons.person,
                 size: 30,
-                color: Color(gris),
+                color: Color(azul),
               ),
               backgroundColor: Colors.white
             ),

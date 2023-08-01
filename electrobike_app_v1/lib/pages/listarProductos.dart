@@ -84,44 +84,48 @@ class _ListarProductosState extends State<ListarProductos> {
                         ModeloProducto producto = filteredList[index];
                         return Padding(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 20.0, vertical: 5.0),
+                              horizontal: 17.0, vertical: 5.0),
                           child: Card(
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10.0),
                             ),
                             elevation: 5.0,
-                            child: ListTile(
-                              title: Text(
-                                producto.nombreProducto,
-                                style: TextStyle(
-                                  fontSize: 18.0,
-                                  fontWeight: FontWeight.bold,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: ListTile(
+                                title: Text(
+                                  producto.nombreProducto,
+                                  style: TextStyle(
+                                    fontSize: 18.0,
+                                    fontWeight: FontWeight.bold,
+                                    // color: Color(),
+                                  ),
                                 ),
-                              ),
-                              subtitle: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    producto.categoriaProducto,
-                                    style: TextStyle(color: Colors.blue),
+                                subtitle: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      producto.categoriaProducto,
+                                      style: TextStyle(color: Colors.black),
+                                    ),
+                                    Text(
+                                      'Cantidad: ${producto.cantidadProducto}',
+                                      style: TextStyle(color: Colors.black),
+                                    ),
+                                    Text(
+                                      'Estado: ${producto.estadoProducto}',
+                                      style: TextStyle(color: Colors.black),
+                                    ),
+                                  ],
+                                ),
+                                trailing: IconButton(
+                                  onPressed: () {
+                                    openEditPage(context, producto, index);
+                                  },
+                                  icon: Icon(
+                                    Icons.edit,
+                                    color: Colors.blue,
                                   ),
-                                  Text(
-                                    'Cantidad: ${producto.cantidadProducto}',
-                                    style: TextStyle(color: Colors.blue),
-                                  ),
-                                  Text(
-                                    'Estado: ${producto.estadoProducto}',
-                                    style: TextStyle(color: Colors.blue),
-                                  ),
-                                ],
-                              ),
-                              trailing: IconButton(
-                                onPressed: () {
-                                  openEditPage(context, producto, index);
-                                },
-                                icon: Icon(
-                                  Icons.edit,
-                                  color: Colors.blue,
                                 ),
                               ),
                             ),
