@@ -1,10 +1,10 @@
 import 'package:electrobike_app_v1/pages/dashboard.dart';
 import 'package:electrobike_app_v1/pages/listarProductos.dart';
 import 'package:flutter/material.dart';
+import 'package:electrobike_app_v1/pages/registrarProductos.dart';
 
 const azul = 0xFF118dd5;
 const gris = 0xFF1d1d1b;
-
 
 class Home extends StatefulWidget {
   @override
@@ -13,50 +13,70 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int _pageIndex = 0;
-  final List<Widget> _screensList = [dashboard(), ListarProductos()];
+  final List<Widget> _screensList = [Dashboard(), ListarProductos()];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          _screensList.elementAt(_pageIndex),
-          Padding(
-            padding: const EdgeInsets.all(30.0),
-            child: Align(
-              alignment: Alignment(0.0, 1.0),
-              child: ClipRRect(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(30),
-                ),
-                child: BottomNavigationBar(
-                  selectedItemColor: Colors.white,
-                  unselectedItemColor: Colors.grey,
-                  showSelectedLabels: true,
-                  showUnselectedLabels: false,
-                  backgroundColor: Color(gris),
-                  currentIndex: _pageIndex,
-                  onTap: (int index) {
+      extendBody: true,
+      body: _screensList.elementAt(_pageIndex),
+      bottomNavigationBar: ClipRRect(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
+        child: BottomAppBar(
+          color: Color(gris),
+          shape: CircularNotchedRectangle(),
+          child: Container(
+            height: 60.0,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                IconButton(
+                  onPressed: () {
                     setState(() {
-                      _pageIndex = index;
+                      _pageIndex = 0;
                     });
                   },
-                  items: [
-                    BottomNavigationBarItem(
-                      icon: Icon(Icons.home_outlined),
-                      label: 'Dashboard',
-                    ),
-                    BottomNavigationBarItem(
-                      icon: Icon(Icons.directions_bike_outlined),
-                      label: 'Productos',
-                    ),
-                  ],
+                  icon: Icon(
+                    Icons.home_outlined,
+                    color: _pageIndex == 0 ? Colors.white : Colors.grey,
+                  ),
+                  
                 ),
-              ),
+                
+                IconButton(
+                  onPressed: () {
+                    setState(() {
+                      _pageIndex = 1;
+                    });
+                  },
+                  icon: Icon(
+                    Icons.directions_bike_outlined,
+                    color: _pageIndex == 1 ? Colors.white : Colors.grey,
+                  ),
+                ),
+                
+              ],
+              
             ),
+            
           ),
-        ],
+          
+        ),
+        
       ),
+      floatingActionButton:_pageIndex == 1 ? FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => RegistrarProductos()),
+          );
+        },
+        child: Icon(Icons.add),
+        backgroundColor: Colors.blue,
+        elevation: 2.0,
+      ) : null,
+      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+    
     );
   }
 }

@@ -1,19 +1,15 @@
-import 'package:electrobike_app_v1/widgets/appBar.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:electrobike_app_v1/controllers/controllerProductos.dart';
 
-import '../widgets/graficaProductos.dart';
-import '../widgets/recuadrosDashboard.dart';
-
-class Dashboard extends StatefulWidget {
-  const Dashboard({super.key});
+class graficaProductos extends StatefulWidget {
+  const graficaProductos({super.key});
 
   @override
-  State<Dashboard> createState() => _DashboardState();
+  State<graficaProductos> createState() => graficaProductosState();
 }
 
-class _DashboardState extends State<Dashboard> {
+class graficaProductosState extends State<graficaProductos> {
   final ControllerProductos _controller = ControllerProductos();
   List<Map<String, dynamic>> _chartData = [];
 
@@ -58,36 +54,11 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: MyAppBar(),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 30.0),
-              child: CuadrosInformativos(),
-            ),
-            SizedBox(height: 30.0),
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 50.0, vertical: 20.0),
-              child: Column(
-                children: [
-                  Text(
-                    'TOTAL PRODUCTOS',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 25,
-                    ),
-                  ),
-                  graficaProductos(),
-                ],
-                
-              ),
-            ),
-          ],
-        ),
-      ),
+    return Container(
+      height: 300,
+      child: _chartData.isNotEmpty
+          ? _buildPieChart()
+          : CircularProgressIndicator(),
     );
   }
 }
