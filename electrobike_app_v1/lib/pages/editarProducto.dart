@@ -173,8 +173,8 @@ class _ActualizarProductoState extends State<ActualizarProducto> {
                       ),
                     ),
                   ),
-                  SizedBox(
-                      height: 10.0), // Espacio entre los campos del formulario
+                  // SizedBox(
+                  //     height: 10.0), // Espacio entre los campos del formulario
                   Padding(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 30.0, vertical: 5.0),
@@ -253,7 +253,6 @@ class _ActualizarProductoState extends State<ActualizarProducto> {
                     child: SelectFormField(
                       controller: estadoProductoController,
                       readOnly: cantidadProducto > 0,
-                      
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
                           return 'Por favor seleccione el estado del producto';
@@ -262,9 +261,8 @@ class _ActualizarProductoState extends State<ActualizarProducto> {
                       },
                       type: SelectFormFieldType.dropdown,
                       decoration: InputDecoration(
-                         filled: cantidadProducto > 0,
-                        fillColor: Color(
-                            0xFFd6d6d6),
+                        filled: cantidadProducto > 0,
+                        fillColor: Color(0xFFd6d6d6),
                         hintText: 'Seleccione el estado del producto',
                         labelText: 'Estado del producto',
                         enabledBorder: OutlineInputBorder(

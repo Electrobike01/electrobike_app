@@ -2,7 +2,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../models/modeloUsuario.dart';
+import '../models/modeloVerPerfil.dart';
+
 
 class UserController {
   final String apiUrl = 'http://192.168.0.4/apiElectrobike_app/';
@@ -36,7 +37,7 @@ class UserController {
       throw Exception('Error en la solicitud HTTP');
     }
   }
-  
+
   // Método para obtener el idUsuario desde el localStorage
   Future<int?> getUserIdFromLocalStorage() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -50,5 +51,42 @@ class UserController {
     // Eliminar idUsuario del localStorage
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove('idUsuario');
+  }
+  Future<VerPerfilModel> getUserProfile(int idUsuario) async {
+    final url = 'http://192.168.0.4/apiElectrobike_app/login/getDataUser.php?idUsuario=$idUsuario';
+
+    final response = await http.get(Uri.parse(url));
+    if (response.statusCode == 200) {
+      final jsonResponse = json.decode(response.body);
+      if (jsonResponse.containsKey('error')) {
+        throw Exception(jsonResponse['error']);
+      } else {
+        return VerPerfilModel.fromJson(jsonResponse);
+      }
+    } else {
+      throw Exception('Error al obtener el perfil del usuario');
+    }
+  }
+
+
+  
+  Future<void> actualizarPerfil(int idUsuario, Map<String, dynamic> data) async {
+    try {
+      final url = 'http://192.168.0.4/apiElectrobike_app/login/updateUser.php?idUsuario=$idUsuario';
+      final response = await http.put(
+        Uri.parse(url),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode(data),
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+        print(responseData['message']); // Mensaje de éxito de la API
+      } else {
+        print('Error al actualizar perfil');
+      }
+    } catch (e) {
+      print('Error en la solicitud de actualizaciónnnn: $e');
+    }
   }
 }

@@ -63,7 +63,7 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
           onSelected: (value) {
             if (value == MenuItemButton.verPefil) {
               Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => const VerPerfil()),
+                MaterialPageRoute(builder: (context) =>  VerPerfil()),
               );
             } else if (value == MenuItemButton.cerrarSesion) {
               _showLogoutConfirmationDialog(context); // Llama al método para mostrar la alerta
