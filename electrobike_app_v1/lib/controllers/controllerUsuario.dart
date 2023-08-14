@@ -52,9 +52,9 @@ class UserController {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove('idUsuario');
   }
+
   Future<VerPerfilModel> getUserProfile(int idUsuario) async {
     final url = 'http://192.168.0.4/apiElectrobike_app/login/getDataUser.php?idUsuario=$idUsuario';
-
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
       final jsonResponse = json.decode(response.body);
@@ -68,10 +68,20 @@ class UserController {
     }
   }
 
+   Future<bool> validarDocumentoRepetido (int idUsuario, String documentoUsuario) async {
+    final response = await http.get(Uri.parse(
+        "http://192.168.0.4/apiElectrobike_app/login/validarDocumento.php?idUsuario=$idUsuario&documentoUsuario=$documentoUsuario"));
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body);
+      return data['isUnique'];
+    } else {
+      return false;
+    }
+  }
 
-  
-  Future<void> actualizarPerfil(int idUsuario, Map<String, dynamic> data) async {
+  Future<void> actualizarPerfil(Map<String, dynamic> data) async {
     try {
+      final idUsuario =data['idUsuario'];
       final url = 'http://192.168.0.4/apiElectrobike_app/login/updateUser.php?idUsuario=$idUsuario';
       final response = await http.put(
         Uri.parse(url),
@@ -86,7 +96,41 @@ class UserController {
         print('Error al actualizar perfil');
       }
     } catch (e) {
+      print('Error en la solicitud de actualizaciónnnn');
+    }
+  }
+
+   Future<bool> validarContrasena (int idUsuario, String contrasenaUsuario) async {
+    final response = await http.get(Uri.parse(
+        "http://192.168.0.4/apiElectrobike_app/login/validarPassUser.php?idUsuario=$idUsuario&contrasenaUsuario=$contrasenaUsuario"));
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body);
+      return data['isUnique'];
+    } else {
+      return false;
+    }
+  }
+
+   Future<void> actualizarContrasena(Map<String, dynamic> data_) async {
+    try {
+      final idUsuario =data_['idUsuario'];
+      final url = 'http://192.168.0.4/apiElectrobike_app/login/actualizarPass.php?idUsuario=$idUsuario';
+      final response = await http.put(
+        Uri.parse(url),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode(data_),
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+        print(responseData['message']); // Mensaje de éxito de la API
+      } else {
+          print('Error al actualizar contraseña');
+      }
+    } catch (e) {
       print('Error en la solicitud de actualizaciónnnn: $e');
     }
   }
+
+  
 }

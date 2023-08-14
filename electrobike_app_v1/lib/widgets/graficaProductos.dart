@@ -36,16 +36,63 @@ class graficaProductosState extends State<graficaProductos> {
       Colors.red,
     ];
 
-    return PieChart(
-      PieChartData(
-        sections: _chartData.map((item) {
+    return AspectRatio(
+      aspectRatio:
+          1, // Ajustar la relación de aspecto para hacer la gráfica más grande
+      child: PieChart(
+        PieChartData(
+          centerSpaceRadius:
+              0, // Establecer el centro a 0 para eliminar el espacio en blanco
+          sections: _chartData.map((item) {
+            int index = _chartData.indexOf(item) % colors.length;
+            double value = item['cantidad'].toDouble();
+            double total =
+                _chartData.fold(0.0, (sum, item) => sum + item['cantidad']);
+            double percentage = (value / total) * 100;
+
+            return PieChartSectionData(
+              value: value,
+              color: colors[index],
+              title:
+                  '${percentage.toStringAsFixed(2)}%', // Mostrar el porcentaje en la gráfica
+              showTitle:
+                  true, // Mostrar el título (porcentaje) dentro de la gráfica
+              titleStyle: TextStyle(fontSize: 12),
+              radius: 100, //tamaño de la grafica
+            );
+          }).toList(),
+        ),
+      ),
+    );
+  }
+
+  // Método para crear la leyenda manualmente
+  Widget _buildLegend() {
+    List<Color> colors = [
+      Colors.blue,
+      Colors.green,
+      Colors.orange,
+      Colors.red,
+    ];
+
+    return Container(
+      padding: const EdgeInsets.all(0),
+      child: Wrap(
+        spacing: 30,
+        runSpacing: 10,
+        children: _chartData.map((item) {
           int index = _chartData.indexOf(item) % colors.length;
-          return PieChartSectionData(
-            title: item['categoriaProducto'],
-            value: item['cantidad'].toDouble(),
-            color: colors[index],
-            radius: 60,
-            titleStyle: TextStyle(fontSize: 16),
+          return Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 16,
+                height: 16,
+                color: colors[index],
+              ),
+              SizedBox(width: 5),
+              Text(item['categoriaProducto']),
+            ],
           );
         }).toList(),
       ),
@@ -54,11 +101,26 @@ class graficaProductosState extends State<graficaProductos> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 300,
-      child: _chartData.isNotEmpty
-          ? _buildPieChart()
-          : CircularProgressIndicator(),
+    return Scaffold(
+      body: Column(
+        children: [
+          Text(
+            'Gráfica categorias', // Título de la gráfica
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.all(8),
+            child: _chartData.isNotEmpty
+                ? _buildPieChart()
+                : CircularProgressIndicator(),
+          ),
+          // Widget de la leyenda
+          _buildLegend(),
+        ],
+      ),
     );
   }
 }

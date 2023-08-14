@@ -57,8 +57,6 @@ class _ActualizarProductoState extends State<ActualizarProducto> {
     }
   ];
 
-  // bool?isUnique;
-
   Future<bool> editProduct(ModeloProducto modeloProducto) async {
     String idProducto = idProductoController.text;
     String nombreProducto = nombreProductoController.text.trim();
@@ -84,7 +82,7 @@ class _ActualizarProductoState extends State<ActualizarProducto> {
               FlutterToastr.show("Producto actualizado", context,
                   duration: FlutterToastr.lengthLong,
                   position: FlutterToastr.bottom,
-                  backgroundColor: Colors.green),
+                  backgroundColor: Color.fromARGB(255, 206, 233, 207)),
               Navigator.pop(context, true)
             });
 

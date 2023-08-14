@@ -34,4 +34,24 @@ class VerPerfilModel {
       nombreRol: json['nombreRol'],
     );
   }
+
+   Map<String, dynamic> toJsonValidateUpdate() {
+    return {
+      "idUsuario": idUsuario,
+      "documentoUsuario": documentoUsuario,
+    };
+  }
+
+    Map<String, dynamic> toJsonUpdate() {
+    return {
+      "idUsuario": idUsuario,
+      "nombreUsuario": nombreUsuario,
+      "tipoDocumentoUsuario": tipoDocumentoUsuario,
+      "documentoUsuario": documentoUsuario,
+      "correoUsuario": correoUsuario,
+      "idRol": idRol,
+      "estadoUsuario": estadoUsuario,
+    };
+  }
+
 }

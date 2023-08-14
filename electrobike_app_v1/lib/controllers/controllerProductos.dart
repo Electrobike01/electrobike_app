@@ -4,19 +4,7 @@ import 'package:electrobike_app_v1/models/modeloProductos.dart';
 
 class ControllerProductos {
 
-//   Future<List<Map<String, dynamic>>> getCantCompras() async {
-//   String url = "http://192.168.0.4/apiElectrobike_app/productos/graficaTorta.php";
-//   final response = await http.get(Uri.parse(url));
-
-//   if (response.statusCode == 200) {
-//       final List<dynamic> jsonData = json.decode(response.body);
-//       return jsonData.isNotEmpty ? jsonData[0] : {};
-//   } else {
-//      throw Exception('Fallo al cargar');
-//   }
-// }
-
-// ====================== METODO GET PARA GRAFICA TODOS LOS PRODUCTOS =====================================
+  //obtener los datos para el grafico de torta
   Future<List<Map<String, dynamic>>> getChartData() async {
   String url = "http://192.168.0.4/apiElectrobike_app/productos/graficaTorta.php";
   final response = await http.get(Uri.parse(url));
@@ -24,6 +12,60 @@ class ControllerProductos {
   if (response.statusCode == 200) {
     List<Map<String, dynamic>> data = json.decode(response.body).cast<Map<String, dynamic>>();
     return data;
+  } else {
+    return [];
+  }
+}
+
+ //obtener los datos para la grafica lineal
+  Future<Map<String, dynamic>> getComprasYVentasPorMes() async {
+    String url =
+        "http://192.168.0.4/apiElectrobike_app/productos/graficaLineal.php";
+    final response = await http.get(Uri.parse(url));
+    if (response.statusCode == 200) {
+      Map<String, dynamic> jsonData = json.decode(response.body);
+      return jsonData;
+    } else {
+      return {};
+    }
+  }
+
+  
+  //recuadros
+  Future<Map<String, dynamic>> getRecuadros() async {
+  String url = "http://192.168.0.4/apiElectrobike_app/productos/recuadros.php";
+  final response = await http.get(Uri.parse(url));
+
+  if (response.statusCode == 200) {
+    Map<String, dynamic> data = json.decode(response.body);
+    return data;
+  } else {
+    return {};
+  }
+}
+
+
+Future<List<Map<String, dynamic>>> getTopProductos() async {
+  String url = "http://192.168.0.4/apiElectrobike_app/productos/5productos.php";
+  final response = await http.get(Uri.parse(url));
+
+  if (response.statusCode == 200) {
+    Map<String, dynamic> responseData = json.decode(response.body);
+    List<Map<String, dynamic>> productList = (responseData['productos'] as List).cast<Map<String, dynamic>>();
+    return productList;
+  } else {
+    return [];
+  }
+}
+
+Future<List<Map<String, dynamic>>> getTopClientes() async {
+  String url = "http://192.168.0.4/apiElectrobike_app/productos/5clientes.php";
+  final response = await http.get(Uri.parse(url));
+
+  if (response.statusCode == 200) {
+    Map<String, dynamic> data = json.decode(response.body);
+    List<Map<String, dynamic>> clientes = List<Map<String, dynamic>>.from(data['clientes']);
+    return clientes;
   } else {
     return [];
   }
@@ -50,7 +92,7 @@ class ControllerProductos {
     }
   }
 
-  // ============================== SET PRODUCTOS ===================================
+  // ============================== ENVIAR PRODUCTOS ===================================
   Future<String> addProducto(ModeloProducto ModeloProducto) async {
     String set_productos =
         "http://192.168.0.4/apiElectrobike_app/productos/registrarProductos.php";
@@ -64,7 +106,7 @@ class ControllerProductos {
     }
   }
 
-  // =============================== PUT PRODUCTOS ==================================================
+  // =============================== ACTUALIZAR PRODUCTOS ==================================================
   Future<String> updateProducto(ModeloProducto ModeloProducto) async {
     String actualizar_productos =
         "http://192.168.0.4/apiElectrobike_app/productos/ActualizarProductos.php";

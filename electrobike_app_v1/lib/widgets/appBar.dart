@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_toastr/flutter_toastr.dart';
 import '../controllers/controllerUsuario.dart';
 import '../pages/Login.dart';
+import '../pages/actualizarPerfil.dart';
 import '../pages/verPerfil.dart';
 
 
@@ -63,20 +64,33 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
           onSelected: (value) {
             if (value == MenuItemButton.verPefil) {
               Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) =>  VerPerfil()),
+                MaterialPageRoute(builder: (context) =>  infoPerfil()),
               );
             } else if (value == MenuItemButton.cerrarSesion) {
               _showLogoutConfirmationDialog(context); // Llama al método para mostrar la alerta
             }
           },
           itemBuilder: (context) => [
-            PopupMenuItem(
+             PopupMenuItem<MenuItemButton>(
               value: MenuItemButton.verPefil,
-              child: Text('Ver perfil'),
+              
+              child: Row(
+              children: [
+                Icon(Icons.person, color: Colors.black,), // Agregar el icono aquí
+                SizedBox(width: 8.0),
+                Text('Ver perfil'),
+              ],
             ),
-            PopupMenuItem(
+            ),
+            PopupMenuItem<MenuItemButton>(
               value: MenuItemButton.cerrarSesion,
-              child: Text('Cerrar sesion'),
+                  child: Row(
+              children: [
+                Icon(Icons.logout, color: Color(gris),), // Agregar el icono aquí
+                SizedBox(width: 8.0),
+                Text('Cerrar sesion'),
+              ],
+            ),
             ),
           ],
           child: Padding(
