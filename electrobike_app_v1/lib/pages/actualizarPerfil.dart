@@ -1,4 +1,5 @@
 // ============================ IMPORTACIONES ========================================
+import 'package:electrobike_app_v1/pages/cambiarContrasena.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_toastr/flutter_toastr.dart';
 import 'package:select_form_field/select_form_field.dart';
@@ -6,6 +7,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../controllers/controllerUsuario.dart';
 import '../models/modeloVerPerfil.dart';
 import 'package:flutter/services.dart';
+import 'dart:async';
+import 'dart:io';
+
 // ============================= COLORES ==============================================
 const azul = 0xFF118dd5;
 
@@ -15,11 +19,11 @@ class VerPerfil extends StatefulWidget {
 }
 
 class _VerPerfilState extends State<VerPerfil> {
-
 // Se crean las variables que se van a usar
   final _formKey = GlobalKey<FormState>();
   VerPerfilModel? _user;
   bool _isLoading = true;
+  Timer? _timer;
 
   // Se crean los controladores
   final _userController = UserController();
@@ -56,12 +60,50 @@ class _VerPerfilState extends State<VerPerfil> {
     _loadUserProfile();
   }
 
+  Future<bool> checkInternetConnection() async {
+    try {
+      final result = await InternetAddress.lookup('example.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        return true; // Hay conexión a internet
+      }
+    } on SocketException catch (_) {
+      return false; // No hay conexión a internet
+    }
+    return false; // No hay conexión a internet
+  }
+
   // Metodo para traer los datos del usuarios
   Future<void> _loadUserProfile() async {
+    bool isConnected = await checkInternetConnection();
+    if (!isConnected) {
+      FlutterToastr.show(
+        "Verifique su conexión a internet",
+        context,
+        duration: FlutterToastr.lengthLong,
+        position: FlutterToastr.bottom,
+        backgroundColor: Color(0xFFd53b3b),
+      );
+    }
+
+    // Iniciar el temporizador durante una duración fija
+    _timer = Timer(Duration(seconds: 30), () {
+      FlutterToastr.show(
+        "Tiempo de espera agotado al iniciar sesión",
+        context,
+        duration: FlutterToastr.lengthLong,
+        position: FlutterToastr.bottom,
+        backgroundColor: Color(0xFFd53b3b),
+      );
+      setState(() {
+        _isLoading = false;
+      });
+    });
+
     try {
       // Obtener el ID del usuario desde shared_preferences
       final prefs = await SharedPreferences.getInstance();
-      final idUsuario = prefs.getInt('idUsuario') ?? -1; // Si no hay valor en shared_preferences, usar el valor predeterminado -1
+      final idUsuario = prefs.getInt('idUsuario') ??
+          -1; // Si no hay valor en shared_preferences, usar el valor predeterminado -1
 
       final user = await _userController.getUserProfile(idUsuario);
       setState(() {
@@ -97,7 +139,32 @@ class _VerPerfilState extends State<VerPerfil> {
   }
 
   Future<bool> editarUser(Map<String, dynamic> data) async {
-    
+    bool isConnected = await checkInternetConnection();
+    if (!isConnected) {
+      FlutterToastr.show(
+        "Verifique su conexión a internet",
+        context,
+        duration: FlutterToastr.lengthLong,
+        position: FlutterToastr.bottom,
+        backgroundColor: Color(0xFFd53b3b),
+      );
+      return false;
+    }
+
+    // Iniciar el temporizador durante una duración fija
+    _timer = Timer(Duration(seconds: 30), () {
+      FlutterToastr.show(
+        "Tiempo de espera agotado al iniciar sesión",
+        context,
+        duration: FlutterToastr.lengthLong,
+        position: FlutterToastr.bottom,
+        backgroundColor: Color(0xFFd53b3b),
+      );
+      setState(() {
+        _isLoading = false;
+      });
+    });
+
     int idUsuario = data['idUsuario'];
     String documentoUsuario = data['documentoUsuario'];
 
@@ -189,7 +256,10 @@ class _VerPerfilState extends State<VerPerfil> {
           Center(
             child: Text(
               'Actualizar perfil',
-              style: TextStyle(fontSize: 30.0, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  fontSize: 30.0,
+                  fontWeight: FontWeight.bold,
+                  color: Color(gris)),
             ),
           ),
           SizedBox(height: 30.0),
@@ -390,61 +460,68 @@ class _VerPerfilState extends State<VerPerfil> {
                   ),
                 ),
               ),
-              SizedBox(height: 20.0),
+              SizedBox(height: 40.0),
+              Center(
+                child: _isLoading
+                    ? CircularProgressIndicator()
+                    : ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            fixedSize: Size(200.0, 50),
+                            backgroundColor: Color(azul)),
+                        onPressed: () async {
+                          if (_formKey.currentState!.validate()) {
+                            setState(() {
+                              _isLoading = true;
+                            });
+                            if (documentoUsuarioController.text.trim().length <
+                                8) {
+                                  // Me quede en poniendo el boton circular progress 
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    title: Text('Error'),
+                                    content: Text(
+                                        'El documento debe tener al menos 8 caracteres.'),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text('Aceptar'),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            } else {
+                              final prefs =
+                                  await SharedPreferences.getInstance();
+                              final idUsuario = prefs.getInt('idUsuario') ?? -1;
 
-              SizedBox(height: 20.0),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 100.0),
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    fixedSize: Size(200.0, 50),
-                    // elevation: 20.0,
-                  ),
-                  onPressed: () async {
-                    if (_formKey.currentState!.validate()) {
-                      if (documentoUsuarioController.text.trim().length < 8) {
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title: Text('Error'),
-                              content: Text(
-                                  'El documento debe tener al menos 8 caracteres.'),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text('Aceptar'),
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      } else {
-                        final prefs = await SharedPreferences.getInstance();
-                        final idUsuario = prefs.getInt('idUsuario') ?? -1;
+                              final idRol = idRolController.text;
+                              int idRol_ = int.parse(idRol);
 
-                        final idRol = idRolController.text;
-                        int idRol_ = int.parse(idRol);
-                        
-                        Map<String, dynamic> data = {
-                          'idUsuario': idUsuario,
-                          'nombreUsuario': nombreUsuarioController.text.trim(),
-                          'tipoDocumentoUsuario':
-                              tipoDocumentoController.text.trim(),
-                          'documentoUsuario':
-                              documentoUsuarioController.text.trim(),
-                          'correoUsuario': correoUsuarioController.text.trim(),
-                          'estadoUsuario': estadoUsuarioController.text.trim(),
-                          'idRol': idRol_,
-                        };
-                        editarUser(data);
-                      }
-                    }
-                  },
-                  child: Text('Save'),
-                ),
+                              Map<String, dynamic> data = {
+                                'idUsuario': idUsuario,
+                                'nombreUsuario':
+                                    nombreUsuarioController.text.trim(),
+                                'tipoDocumentoUsuario':
+                                    tipoDocumentoController.text.trim(),
+                                'documentoUsuario':
+                                    documentoUsuarioController.text.trim(),
+                                'correoUsuario':
+                                    correoUsuarioController.text.trim(),
+                                'estadoUsuario':
+                                    estadoUsuarioController.text.trim(),
+                                'idRol': idRol_,
+                              };
+                              editarUser(data);
+                            }
+                          }
+                        },
+                        child: Text('Guardar'),
+                      ),
               ),
               SizedBox(height: 60.0),
             ]),

@@ -3,6 +3,7 @@ import 'package:flutter_toastr/flutter_toastr.dart';
 import '../controllers/controllerUsuario.dart';
 import 'home.dart';
 import 'dart:io';
+import 'dart:async';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -20,6 +21,7 @@ class _LoginState extends State<Login> {
   TextEditingController emailUsuario = TextEditingController();
   TextEditingController passUsuario = TextEditingController();
   final UserController _userController = UserController();
+  Timer? _timer;
 
   Future<bool> checkInternetConnection() async {
     try {
@@ -31,6 +33,68 @@ class _LoginState extends State<Login> {
       return false; // No hay conexión a internet
     }
     return false; // No hay conexión a internet
+  }
+
+  Future<bool> iniciarSesion(Map<String, dynamic> dataLogin) async {
+    bool isConnected = await checkInternetConnection();
+    if (!isConnected) {
+      FlutterToastr.show(
+        "Verifique su conexión a internet",
+        context,
+        duration: FlutterToastr.lengthLong,
+        position: FlutterToastr.bottom,
+        backgroundColor: Color(0xFFd53b3b),
+      );
+      return false;
+    }
+
+    // Iniciar el temporizador durante una duración fija
+    _timer = Timer(Duration(seconds: 30), () {
+      FlutterToastr.show(
+        "Tiempo de espera agotado al iniciar sesión",
+        context,
+        duration: FlutterToastr.lengthLong,
+        position: FlutterToastr.bottom,
+        backgroundColor: Color(0xFFd53b3b),
+      );
+      setState(() {
+        _isLoading = false;
+      });
+    });
+
+    // Inicio de inicio de sesión
+    String email = dataLogin['emailUsuario'];
+    String password = dataLogin['contrasenaUsuario'];
+    bool success = await _userController.Login(email, password);
+
+    // Cancelar el temporizador despues de inicar sesion
+    _timer?.cancel();
+
+    if (success) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => Home()),
+      );
+      return true;
+    } else {
+      FlutterToastr.show(
+        "No se pudo iniciar sesión \n Verifique sus datos",
+        context,
+        duration: 3,
+        position: FlutterToastr.bottom,
+        backgroundColor: Color(0xFFd53b3b),
+      );
+    }
+    setState(() {
+      _isLoading = false;
+    });
+    return false;
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
 
   @override
@@ -164,58 +228,32 @@ class _LoginState extends State<Login> {
                             ),
                           ),
                         ),
-                        SizedBox(height: 60),
+                        SizedBox(height: 80),
                         Center(
                           child: _isLoading
                               ? CircularProgressIndicator()
                               : ElevatedButton(
-                                  style: TextButton.styleFrom(
+                                  style: ElevatedButton.styleFrom(
+                                    fixedSize: Size(200.0, 50),
                                     backgroundColor: Color(azul),
-                                    minimumSize: Size(120, 40),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12.0),
-                                    ),
                                   ),
                                   child: Text('Iniciar Sesión'),
                                   onPressed: () async {
                                     if (_formKey.currentState!.validate()) {
-                                      
-
-
-
-
-
-
                                       setState(() {
                                         _isLoading = true;
                                       });
-                                      String email = emailUsuario.text.trim();
-                                      String password = passUsuario.text.trim();
-                                      bool success =
-                                          await _userController.Login(
-                                              email, password);
-                                      if (success) {
-                                        Navigator.pushReplacement(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => Home()),
-                                        );
-                                      } else {
-                                        FlutterToastr.show(
-                                          "Error al iniciar",
-                                          context,
-                                          duration: FlutterToastr.lengthLong,
-                                          position: FlutterToastr.bottom,
-                                          backgroundColor: Colors.red,
-                                        );
-                                      }
-                                      setState(() {
-                                        _isLoading = false;
-                                      });
+                                      Map<String, dynamic> dataLogin = {
+                                        'emailUsuario':
+                                            emailUsuario.text.trim(),
+                                        'contrasenaUsuario': passUsuario.text,
+                                      };
+                                      iniciarSesion(dataLogin);
                                     }
                                   },
                                 ),
                         ),
+                        SizedBox(height: 80),
                       ],
                     ),
                   ),

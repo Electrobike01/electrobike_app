@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
-import 'package:shared_preferences/shared_preferences.dart'; // Importa la librería shared_preferences
+import 'package:flutter_toastr/flutter_toastr.dart';
+import 'package:shared_preferences/shared_preferences.dart'; 
 import '../controllers/controllerUsuario.dart';
 import '../models/modeloVerPerfil.dart';
-import '../widgets/appBar.dart';
 import 'Login.dart';
 import 'actualizarPerfil.dart';
 import 'cambiarContrasena.dart';
+import 'dart:io';
+import 'dart:async';
 
 const azul = 0xFF118dd5;
 const gris = 0xFF1d1d1b;
@@ -22,6 +23,7 @@ class infoPerfilState extends State<infoPerfil> {
   VerPerfilModel? _user;
   bool _isLoading = true;
   final _userController = UserController();
+  Timer? _timer;
 
   @override
   void initState() {
@@ -33,15 +35,53 @@ class infoPerfilState extends State<infoPerfil> {
     // Obtener el ID del usuario desde shared_preferences
     final prefs = await SharedPreferences.getInstance();
     final idUsuario = prefs.getInt('idUsuario') ??
-        1; // Si no hay valor en shared_preferences, usar el valor predeterminado 1
+        -1; // Si no hay valor en shared_preferences, usar el valor predeterminado 1
   }
+
+    Future<bool> checkInternetConnection() async {
+    try {
+      final result = await InternetAddress.lookup('example.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        return true; // Hay conexión a internet
+      }
+    } on SocketException catch (_) {
+      return false; // No hay conexión a internet
+    }
+    return false; // No hay conexión a internet
+  }
+
 
   Future<void> _loadUserProfile() async {
     try {
+       bool isConnected = await checkInternetConnection();
+    if (!isConnected) {
+      FlutterToastr.show(
+        "Verifique su conexión a internet",
+        context,
+        duration: FlutterToastr.lengthLong,
+        position: FlutterToastr.bottom,
+        backgroundColor: Color(0xFFd53b3b),
+      );
+    }
+
+    // Iniciar el temporizador durante una duración fija
+    _timer = Timer(Duration(seconds: 30), () {
+      FlutterToastr.show(
+        "Tiempo de espera agotado al iniciar sesión",
+        context,
+        duration: FlutterToastr.lengthLong,
+        position: FlutterToastr.bottom,
+        backgroundColor: Color(0xFFd53b3b),
+      );
+      setState(() {
+        _isLoading = false;
+      });
+    });
+
       // Obtener el ID del usuario desde shared_preferences
       final prefs = await SharedPreferences.getInstance();
       final idUsuario = prefs.getInt('idUsuario') ??
-          1; // Si no hay valor en shared_preferences, usar el valor predeterminado 1
+          -1; 
 
       final user = await _userController.getUserProfile(idUsuario);
       setState(() {
@@ -104,24 +144,28 @@ class infoPerfilState extends State<infoPerfil> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Color(azul),
-          automaticallyImplyLeading:
-              true, // Esto evita que se muestre la flecha de retroceso
-          title: Text('ELECTROBIKE'),
-          toolbarHeight: 65, // Cambiar esta línea al valor deseado (en píxeles)
-          elevation: 0,
-          leading: IconButton(
-            icon: Icon(
-              Icons.arrow_back,
-              color: Colors.white,
-            ),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
+      appBar: AppBar(
+        backgroundColor: Color(azul),
+        automaticallyImplyLeading:
+            true, // Esto evita que se muestre la flecha de retroceso
+        title: Text('ELECTROBIKE'),
+        toolbarHeight: 65, // Cambiar esta línea al valor deseado (en píxeles)
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: Colors.white,
           ),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
         ),
-        body: SingleChildScrollView(
+      ),
+      body: RefreshIndicator(
+        onRefresh: _loadUserProfile,
+        child: SingleChildScrollView(
+          physics:
+              const AlwaysScrollableScrollPhysics(), // Esto asegura que el refreshIndicator funcione incluso si el contenido es pequeño
           child: Column(
             children: [
               Container(
@@ -163,11 +207,11 @@ class infoPerfilState extends State<infoPerfil> {
                 'Opciones de usuario',
                 textAlign: TextAlign.start,
                 style: TextStyle(
-                    fontSize: 25.0,
+                    fontSize: 30.0,
                     fontWeight: FontWeight.bold,
                     color: Color(gris)),
               ),
-              SizedBox(height: 140.0),
+              SizedBox(height: 100.0),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 80.0),
                 child: ElevatedButton(
@@ -196,14 +240,13 @@ class infoPerfilState extends State<infoPerfil> {
                   ),
                 ),
               ),
-              SizedBox(height: 20.0),
+              SizedBox(height: 30.0),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 80.0),
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     fixedSize: Size(200.0, 50),
                     backgroundColor: Color(azul),
-                    elevation: 0,
                     shape: RoundedRectangleBorder(
                       borderRadius:
                           BorderRadius.circular(10.0), // Bordes redondeados
@@ -227,35 +270,10 @@ class infoPerfilState extends State<infoPerfil> {
                 ),
               ),
               SizedBox(height: 80.0),
-              // Padding(
-              //   padding: const EdgeInsets.symmetric(horizontal: 80.0),
-              //   child: ElevatedButton(
-              //     style: ElevatedButton.styleFrom(
-              //       fixedSize: Size(200.0, 50),
-              //       backgroundColor: Color(gris),
-              //       elevation: 0,
-              //       shape: RoundedRectangleBorder(
-              //         borderRadius:
-              //             BorderRadius.circular(10.0), // Bordes redondeados
-              //         side: BorderSide(color: Color(gris)), // Borde azul
-              //       ),
-              //     ),
-              //     onPressed: () async {
-              //       _showLogoutConfirmationDialog(
-              //           context); // Llama al método para mostrar la alerta
-              //     },
-              //     child: Row(
-              //       mainAxisAlignment: MainAxisAlignment.start,
-              //       children: [
-              //         Icon(Icons.logout), // Agregar el icono aquí
-              //         SizedBox(width: 30), // Espacio entre el icono y el texto
-              //         Text('Cerrar sesion'),
-              //       ],
-              //     ),
-              //   ),
-              // ),
             ],
           ),
-        ));
+        ),
+      ),
+    );
   }
 }

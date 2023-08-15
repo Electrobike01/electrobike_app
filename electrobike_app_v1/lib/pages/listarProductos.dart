@@ -17,8 +17,10 @@ class _ListarProductosState extends State<ListarProductos> {
   List<ModeloProducto> listaProductos = [];
   List<ModeloProducto> filteredList = [];
   String _searchText = "";
+    bool isLoading = false;
 
-  ValueNotifier<List<ModeloProducto>> _filteredListNotifier = ValueNotifier<List<ModeloProducto>>([]);
+  ValueNotifier<List<ModeloProducto>> _filteredListNotifier =
+      ValueNotifier<List<ModeloProducto>>([]);
 
   Timer? _debounceTimer;
   bool _isLoading = true;
@@ -113,25 +115,43 @@ class _ListarProductosState extends State<ListarProductos> {
                                           ),
                                         ),
                                         subtitle: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
                                             Text(
                                               producto.categoriaProducto,
-                                              style: TextStyle(color: Colors.black),
+                                              style: TextStyle(
+                                                  color: Colors.black),
                                             ),
                                             Text(
                                               'Cantidad: ${producto.cantidadProducto}',
-                                              style: TextStyle(color: Colors.black),
+                                              style: TextStyle(
+                                                  color: Colors.black),
                                             ),
-                                            Text(
-                                              'Estado: ${producto.estadoProducto}',
-                                              style: TextStyle(color: Colors.black),
-                                            ),
+                                            RichText(
+                                              text: TextSpan(
+                                                style:
+                                                    DefaultTextStyle.of(context)
+                                                        .style,
+                                                children: <TextSpan>[
+                                                  TextSpan(text: 'Estado: '),
+                                                  TextSpan(
+                                                    text:'${producto.estadoProducto}',
+                                                    style: TextStyle(
+                                                      color: producto.estadoProducto ==  'Activo'? Colors.green
+                                                              : Colors.red,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            )
                                           ],
                                         ),
                                         trailing: IconButton(
                                           onPressed: () {
-                                            openEditPage(context, producto, index);
+                                            
+                                            openEditPage(
+                                                context, producto, index);
                                           },
                                           icon: Icon(
                                             Icons.edit,
