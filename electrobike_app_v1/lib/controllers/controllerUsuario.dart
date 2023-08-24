@@ -9,37 +9,59 @@ class UserController {
   // Hay que hacer esto en los controllers
   final String apiUrl = 'http://192.168.0.4/apiElectrobike_app/';
 
-  // Metodo para inicar sesion
-  Future<bool> Login(String email, String password) async {
-    final response = await http.post(
-      Uri.parse('$apiUrl/login/login.php'),
+  // // Metodo para inicar sesion
+  // Future<bool> Login(String email, String password) async {
+  //   final response = await http.post(
+  //     Uri.parse('$apiUrl/login/login.php'),
 
-      // Configuracion del encabezado
-      // Codifica los caracteres en UTF-8
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, String>{
-        'correoUsuario': email,
-        'contrasenaUsuario': password,
-      }),
-    );
+  //     // Configuracion del encabezado
+  //     // Codifica los caracteres en UTF-8
+  //     headers: <String, String>{
+  //       'Content-Type': 'application/json; charset=UTF-8',
+  //     },
+  //     body: jsonEncode(<String, String>{
+  //       'correoUsuario': email,
+  //       'contrasenaUsuario': password,
+  //     }),
+  //   );
 
-    if (response.statusCode == 200) {
-      Map<String, dynamic> data = jsonDecode(response.body);
-      if (data['success']) {
-        int idUsuario = data['idUsuario'];
-        // Guardar el idUsuario en el SharedPreferences(localStorage)
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        prefs.setInt('idUsuario', idUsuario);
-        return true;
-      } else {
-        return false;
-      }
-    } else {
-      throw Exception('Error en la solicitud HTTP');
-    }
+  //   if (response.statusCode == 200) {
+  //     Map<String, dynamic> data = jsonDecode(response.body);
+  //     if (data['success']) {
+  //       int idUsuario = data['idUsuario'];
+  //       // Guardar el idUsuario en el SharedPreferences(localStorage)
+  //       SharedPreferences prefs = await SharedPreferences.getInstance();
+  //       prefs.setInt('idUsuario', idUsuario);
+  //       return true;
+  //     } else {
+  //       return false;
+  //     }
+  //   } else {
+  //     throw Exception('Error en la solicitud HTTP');
+  //   }
+  // }
+
+  Future<Map<String, dynamic>> Login(String email, String password) async {
+  final response = await http.post(
+    Uri.parse('$apiUrl/login/login.php'),
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: jsonEncode(<String, String>{
+      'correoUsuario': email,
+      'contrasenaUsuario': password,
+    }),
+  );
+
+  if (response.statusCode == 200) {
+    Map<String, dynamic> data = jsonDecode(response.body);
+    print('data:$data');
+    return data; // Devuelve la respuesta completa del servidor
+  } else {
+    throw Exception('Error en la solicitud HTTP');
   }
+}
+
 
   // Metodo para obtener el idUsuario desde el localStorage
   Future<int?> getUserIdFromLocalStorage() async {

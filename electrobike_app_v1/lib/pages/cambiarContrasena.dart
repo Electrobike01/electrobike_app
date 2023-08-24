@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_toastr/flutter_toastr.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../controllers/controllerUsuario.dart';
+import 'dart:io';
+import 'dart:async';
 
 const azul = 0xFF118dd5;
 const gris = 0xFF1d1d1b;
@@ -19,18 +21,57 @@ class _cambiarContrasenaState extends State<cambiarContrasena> {
   bool _obscurePassword2 = true;
   bool _obscurePassword3 = true;
   TextEditingController contrasenaUsuarioController = TextEditingController();
-  TextEditingController nuevaContrasenaUsuarioController =
-      TextEditingController();
-  TextEditingController confirmContrasenaUsuarioController =
-      TextEditingController();
+  TextEditingController nuevaContrasenaUsuarioController = TextEditingController();
+  TextEditingController confirmContrasenaUsuarioController = TextEditingController();
+  bool _isLoading = false;
+  Timer? _timer;
+
+  Future<bool> checkInternetConnection() async {
+    try {
+      final result = await InternetAddress.lookup('example.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        return true; // Hay conexión a internet
+      }
+    } on SocketException catch (_) {
+      return false; // No hay conexión a internet
+    }
+    return false; // No hay conexión a internet
+  }
 
   Future<bool> editarPass(Map<String, dynamic> data) async {
+    bool isConnected = await checkInternetConnection();
+    if (!isConnected) {
+      FlutterToastr.show(
+        "Verifique su conexión a internet",
+        context,
+        duration: FlutterToastr.lengthLong,
+        position: FlutterToastr.bottom,
+        backgroundColor: Color(0xFFd53b3b),
+      );
+      return false;
+    }
+
+    // Iniciar el temporizador durante una duración fija
+    _timer = Timer(Duration(seconds: 30), () {
+      FlutterToastr.show(
+        "Tiempo de espera agotado",
+        context,
+        duration: FlutterToastr.lengthLong,
+        position: FlutterToastr.bottom,
+        backgroundColor: Color(0xFFd53b3b),
+      );
+      setState(() {
+        _isLoading = false;
+      });
+    });
     int idUsuario = data['idUsuario'];
     String contrasenaActual = data['contrasenaActual'];
 
     bool isUnique =
         await UserController().validarContrasena(idUsuario, contrasenaActual);
     if (!isUnique) {
+      // Cancelar el temporizador despues de inicar sesion
+      _timer?.cancel();
       FlutterToastr.show(
         "Error de identidad, no se puede registrar",
         context,
@@ -38,6 +79,9 @@ class _cambiarContrasenaState extends State<cambiarContrasena> {
         position: FlutterToastr.bottom,
         backgroundColor: Colors.red,
       );
+      setState(() {
+        _isLoading = false;
+      });
       return false;
     }
     await UserController().actualizarContrasena(data).then((Success) => {
@@ -45,10 +89,21 @@ class _cambiarContrasenaState extends State<cambiarContrasena> {
               duration: FlutterToastr.lengthLong,
               position: FlutterToastr.bottom,
               backgroundColor: Color.fromARGB(255, 206, 233, 207)),
+          // Cancelar el temporizador despues de inicar sesion
+          _timer?.cancel(),
           Navigator.pop(context, true)
         });
+    setState(() {
+      _isLoading = false;
+    });
 
     return true;
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
 
   @override
@@ -232,53 +287,59 @@ class _cambiarContrasenaState extends State<cambiarContrasena> {
                     SizedBox(height: 40.0),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 100.0),
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          fixedSize: Size(200.0, 50),
-                          // elevation: 20.0,
-                        ),
-                        onPressed: () async {
-                          if (_formKey.currentState!.validate()) {
-                            // print('ContraseñaActual ${contrasenaUsuarioController.text}');
-                            // print('Contraseña nueva ${nuevaContrasenaUsuarioController.text}');
-                            // print('Contraseña nueva 2 ${confirmContrasenaUsuarioController.text}');
-                            if (nuevaContrasenaUsuarioController.text !=
-                                confirmContrasenaUsuarioController.text) {
-                              showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return AlertDialog(
-                                    title: Text('Error de contraseña'),
-                                    content: Text(
-                                        'Las contraseñas nuevas no coinciden.\n\nVuelve a ingresar'),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                        child: Text('Aceptar'),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
-                            } else {
-                              final prefs =
-                                  await SharedPreferences.getInstance();
-                              final idUsuario = prefs.getInt('idUsuario') ?? -1;
-                              Map<String, dynamic> data = {
-                                'idUsuario': idUsuario,
-                                'contrasenaActual':
-                                    contrasenaUsuarioController.text,
-                                'contrasenaNueva':
-                                    nuevaContrasenaUsuarioController.text,
-                              };
-                              editarPass(data);
-                            }
-                          }
-                        },
-                        child: Text('Guardar'),
-                      ),
+                      child: _isLoading
+                          ? CircularProgressIndicator()
+                          : ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                fixedSize: Size(200.0, 50),
+                                // elevation: 20.0,
+                              ),
+                              onPressed: () async {
+                                if (_formKey.currentState!.validate()) {
+                                  setState(() {
+                                    _isLoading = true;
+                                  });
+                                  // print('ContraseñaActual ${contrasenaUsuarioController.text}');
+                                  // print('Contraseña nueva ${nuevaContrasenaUsuarioController.text}');
+                                  // print('Contraseña nueva 2 ${confirmContrasenaUsuarioController.text}');
+                                  if (nuevaContrasenaUsuarioController.text !=
+                                      confirmContrasenaUsuarioController.text) {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return AlertDialog(
+                                          title: Text('Error de contraseña'),
+                                          content: Text(
+                                              'Las contraseñas nuevas no coinciden.\n\nVuelve a ingresar'),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                              },
+                                              child: Text('Aceptar'),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  } else {
+                                    final prefs =
+                                        await SharedPreferences.getInstance();
+                                    final idUsuario =
+                                        prefs.getInt('idUsuario') ?? -1;
+                                    Map<String, dynamic> data = {
+                                      'idUsuario': idUsuario,
+                                      'contrasenaActual':
+                                          contrasenaUsuarioController.text,
+                                      'contrasenaNueva':
+                                          nuevaContrasenaUsuarioController.text,
+                                    };
+                                    editarPass(data);
+                                  }
+                                }
+                              },
+                              child: Text('Guardar'),
+                            ),
                     ),
                   ],
                 ),

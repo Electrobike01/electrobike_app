@@ -118,6 +118,8 @@ class _VerPerfilState extends State<VerPerfil> {
         nombreRolController.text = _user!.nombreRol!;
         idRolController.text = _user!.idRol.toString();
       });
+      // Cancelar el temporizador despues de ejecutar la accion
+      _timer?.cancel();
     } catch (e) {
       setState(() {
         _isLoading = false;
@@ -141,6 +143,9 @@ class _VerPerfilState extends State<VerPerfil> {
   Future<bool> editarUser(Map<String, dynamic> data) async {
     bool isConnected = await checkInternetConnection();
     if (!isConnected) {
+      setState(() {
+        _isLoading = false;
+      });
       FlutterToastr.show(
         "Verifique su conexión a internet",
         context,
@@ -151,7 +156,7 @@ class _VerPerfilState extends State<VerPerfil> {
       return false;
     }
 
-    // Iniciar el temporizador durante una duración fija
+    // Iniciar el temporizador
     _timer = Timer(Duration(seconds: 30), () {
       FlutterToastr.show(
         "Tiempo de espera agotado al iniciar sesión",
@@ -170,7 +175,10 @@ class _VerPerfilState extends State<VerPerfil> {
 
     bool isUnique = await UserController()
         .validarDocumentoRepetido(idUsuario, documentoUsuario);
+
     if (!isUnique) {
+      // Cancelar el temporizador despues de inicar sesion
+      _timer?.cancel();
       FlutterToastr.show(
         "El documento ya fue refgistrado",
         context,
@@ -182,6 +190,8 @@ class _VerPerfilState extends State<VerPerfil> {
     }
 
     await UserController().actualizarPerfil(data).then((Success) => {
+          // Cancelar el temporizador despues de inicar sesion
+          _timer?.cancel(),
           FlutterToastr.show("Producto actualizado", context,
               duration: FlutterToastr.lengthLong,
               position: FlutterToastr.bottom,
@@ -192,6 +202,13 @@ class _VerPerfilState extends State<VerPerfil> {
     return true;
   }
 
+  
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -475,7 +492,7 @@ class _VerPerfilState extends State<VerPerfil> {
                             });
                             if (documentoUsuarioController.text.trim().length <
                                 8) {
-                                  // Me quede en poniendo el boton circular progress 
+                              // Me quede en poniendo el boton circular progress
                               showDialog(
                                 context: context,
                                 builder: (context) {

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_toastr/flutter_toastr.dart';
 import '../controllers/controllerUsuario.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'home.dart';
 import 'dart:io';
 import 'dart:async';
+import 'dart:convert';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -45,13 +47,16 @@ class _LoginState extends State<Login> {
         position: FlutterToastr.bottom,
         backgroundColor: Color(0xFFd53b3b),
       );
+      setState(() {
+        _isLoading = false;
+      });
       return false;
     }
 
     // Iniciar el temporizador durante una duración fija
     _timer = Timer(Duration(seconds: 30), () {
       FlutterToastr.show(
-        "Tiempo de espera agotado al iniciar sesión",
+        "Tiempo de espera agotado",
         context,
         duration: FlutterToastr.lengthLong,
         position: FlutterToastr.bottom,
@@ -65,20 +70,32 @@ class _LoginState extends State<Login> {
     // Inicio de inicio de sesión
     String email = dataLogin['emailUsuario'];
     String password = dataLogin['contrasenaUsuario'];
-    bool success = await _userController.Login(email, password);
-
+    // bool success = await _userController.Login(email, password);
+    Map<String, dynamic> response =
+        await _userController.Login(email, password);
+    print('Respuesta: $response');
+    bool success = response['success'];
     // Cancelar el temporizador despues de inicar sesion
     _timer?.cancel();
 
-    if (success) {
+    if (success == true) {
+      // print('se puede');
+      int idUsuario = response['idUsuario'];
+      // Guardar el idUsuario en SharedPreferences
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setInt('idUsuario', idUsuario);
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => Home()),
       );
       return true;
-    } else {
+    } else if (success == false) {
+      // Map<String, dynamic> jsonResponse = json.decode(success.m);
+      // message = jsonResponse['message'];
+      String message = response['message'];
+
       FlutterToastr.show(
-        "No se pudo iniciar sesión \n Verifique sus datos",
+        "No se pudo iniciar sesión \n $message",
         context,
         duration: 3,
         position: FlutterToastr.bottom,

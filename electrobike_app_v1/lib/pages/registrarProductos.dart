@@ -6,8 +6,11 @@ import 'package:electrobike_app_v1/widgets/appBar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_toastr/flutter_toastr.dart';
 import 'package:select_form_field/select_form_field.dart';
+import 'dart:io';
+import 'dart:async';
 
 const gris = 0xFF1d1d1b;
+const azul = 0xFF118dd5;
 
 class RegistrarProductos extends StatefulWidget {
   const RegistrarProductos({super.key});
@@ -20,6 +23,8 @@ class _RegistrarProductosState extends State<RegistrarProductos> {
   final _formKey = GlobalKey<FormState>();
   TextEditingController nombreProductoController = TextEditingController();
   TextEditingController categoriaProductoController = TextEditingController();
+  Timer? _timer;
+  bool _isLoading = false;
 
   final List<Map<String, dynamic>> _items = [
     {
@@ -39,12 +44,55 @@ class _RegistrarProductosState extends State<RegistrarProductos> {
       'label': 'Repuestos baja gama',
     },
   ];
+  Future<bool> checkInternetConnection() async {
+    try {
+      final result = await InternetAddress.lookup('example.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        return true; // Hay conexión a internet
+      }
+    } on SocketException catch (_) {
+      return false; // No hay conexión a internet
+    }
+    return false; // No hay conexión a internet
+  }
 
   Future<bool> AddProduct(ModeloProducto modeloProducto) async {
+    bool isConnected = await checkInternetConnection();
+    if (!isConnected) {
+      setState(() {
+        _isLoading = false;
+      });
+      FlutterToastr.show(
+        "Verifique su conexión a internet",
+        context,
+        duration: FlutterToastr.lengthLong,
+        position: FlutterToastr.bottom,
+        backgroundColor: Color(0xFFd53b3b),
+      );
+
+      return false;
+    }
+
+    // Iniciar el temporizador durante una duración fija
+    _timer = Timer(Duration(seconds: 30), () {
+      FlutterToastr.show(
+        "Tiempo de espera agotado",
+        context,
+        duration: FlutterToastr.lengthLong,
+        position: FlutterToastr.bottom,
+        backgroundColor: Color(0xFFd53b3b),
+      );
+      setState(() {
+        _isLoading = false;
+      });
+    });
+
     String nombreProducto = nombreProductoController.text.trim();
     String categoriaProducto = categoriaProductoController.text.trim();
-          
+
     bool isUnique = await ControllerProductos().ValidarProducto(nombreProducto, categoriaProducto);
+    _timer?.cancel();
+
     if (!isUnique) {
       FlutterToastr.show(
         "El producto ya existe",
@@ -53,14 +101,21 @@ class _RegistrarProductosState extends State<RegistrarProductos> {
         position: FlutterToastr.bottom,
         backgroundColor: Colors.red,
       );
+      setState(() {
+        _isLoading = false;
+      });
       return false;
     }
 
     await ControllerProductos().addProducto(modeloProducto).then((Success) => {
+          _timer?.cancel(),
           FlutterToastr.show("Producto registrado", context,
               duration: FlutterToastr.lengthLong,
               position: FlutterToastr.bottom,
               backgroundColor: Colors.green),
+          setState(() {
+            _isLoading = false;
+          }),
           Navigator.of(context).pop()
         });
 
@@ -68,10 +123,16 @@ class _RegistrarProductosState extends State<RegistrarProductos> {
   }
 
   @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(gris),
+        backgroundColor: Color(azul),
         automaticallyImplyLeading: true,
         title: Text('ELECTROBIKE'),
         toolbarHeight: 65,
@@ -96,7 +157,7 @@ class _RegistrarProductosState extends State<RegistrarProductos> {
                 style: TextStyle(fontSize: 30.0, fontWeight: FontWeight.bold),
               ),
             ),
-            SizedBox(height: 30.0),
+            SizedBox(height: 50.0),
             Form(
               key: _formKey,
               child: Column(
@@ -170,27 +231,34 @@ class _RegistrarProductosState extends State<RegistrarProductos> {
                       )),
                   SizedBox(
                       height:
-                          20.0), // Espacio entre el DropdownButtonFormField y el botón
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      fixedSize: Size(200.0, 50),
-                      elevation: 20.0,
-                    ),
-                    onPressed: () async {
-                      if (_formKey.currentState!.validate()) {
-                        ModeloProducto modeloProducto = ModeloProducto(
-                          nombreProducto: nombreProductoController.text.trim(),
-                          categoriaProducto: categoriaProductoController.text.trim(),
-                        );
-                        bool isAdded = await AddProduct(modeloProducto);
-                        if (isAdded) {
-                          nombreProductoController.clear();
-                          categoriaProductoController.clear();
-                        }
-                      }
-                    },
-                    child: Text('Save'),
-                  ),
+                          40.0), // Espacio entre el DropdownButtonFormField y el botón
+                  _isLoading
+                      ? CircularProgressIndicator()
+                      : ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            fixedSize: Size(200.0, 50),
+                            // elevation: 20.0,
+                          ),
+                          onPressed: () async {
+                            if (_formKey.currentState!.validate()) {
+                              setState(() {
+                                _isLoading = true;
+                              });
+                              ModeloProducto modeloProducto = ModeloProducto(
+                                nombreProducto:
+                                    nombreProductoController.text.trim(),
+                                categoriaProducto:
+                                    categoriaProductoController.text.trim(),
+                              );
+                              bool isAdded = await AddProduct(modeloProducto);
+                              if (isAdded) {
+                                nombreProductoController.clear();
+                                categoriaProductoController.clear();
+                              }
+                            }
+                          },
+                          child: Text('Guardar'),
+                        ),
                 ],
               ),
             )

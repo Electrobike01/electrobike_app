@@ -30,10 +30,10 @@ class graficaProductosState extends State<graficaProductos> {
   // Método para crear la gráfica de torta
   Widget _buildPieChart() {
     List<Color> colors = [
-      Colors.blue,
-      Colors.green,
-      Colors.orange,
-      Colors.red,
+        Color(0xFF0083cf),
+      Color.fromARGB(255, 89, 202, 236),
+      Color.fromARGB(255, 14, 153, 199),
+      Color.fromARGB(255, 0, 193, 252),
     ];
 
     return AspectRatio(
@@ -69,10 +69,10 @@ class graficaProductosState extends State<graficaProductos> {
   // Método para crear la leyenda manualmente
   Widget _buildLegend() {
     List<Color> colors = [
-      Colors.blue,
-      Colors.green,
-      Colors.orange,
-      Colors.red,
+     Color(0xFF0083cf),
+      Color.fromARGB(255, 89, 202, 236),
+      Color.fromARGB(255, 14, 153, 199),
+      Color.fromARGB(255, 0, 193, 252),
     ];
 
     return Container(
@@ -104,10 +104,13 @@ class graficaProductosState extends State<graficaProductos> {
     return Scaffold(
       body: Column(
         children: [
+            SizedBox(
+            height: 30,
+          ),
           Text(
-            'Gráfica categorias', // Título de la gráfica
+            'Productos en stock',
             style: TextStyle(
-              fontSize: 20,
+              fontSize: 28,
               fontWeight: FontWeight.bold,
             ),
           ),

@@ -37,8 +37,6 @@ class graficaLinealState extends State<graficaLineal> {
     _fetchChartData();
   }
 
-  
-
   // Obtener los datos de la gráfica desde el backend
   Future<void> _fetchChartData() async {
     Map<String, dynamic>? data = await _controller.getComprasYVentasPorMes();
@@ -54,7 +52,6 @@ class graficaLinealState extends State<graficaLineal> {
         List<Map<String, dynamic>>.from(comprasData);
     List<Map<String, dynamic>> ventasList =
         List<Map<String, dynamic>>.from(ventasData);
-
 
     // Llamar a la función para obtener los años únicos
     _getUniqueYears(comprasList, ventasList);
@@ -121,12 +118,13 @@ class graficaLinealState extends State<graficaLineal> {
   // Método para crear el gráfico lineal
   Widget _buildLineChart() {
     return Container(
-      width: double.infinity, // Tamaño horizontal deseado
-      height: 250, // Tamaño vertical deseado
+      width: double.infinity, 
+      height: 300, 
       child: Column(
         children: [
           Expanded(
-            child: SfCartesianChart( // Título del gráfico
+            child: SfCartesianChart(
+              // Título del gráfico
               primaryXAxis: CategoryAxis(
                 // Título del eje X con los nombres de los meses
                 labelIntersectAction: AxisLabelIntersectAction.multipleRows,
@@ -137,17 +135,17 @@ class graficaLinealState extends State<graficaLineal> {
                   NumericAxis(), // Eje Y con valores numéricos (total de compras y ventas)
               series: <LineSeries<Map<String, dynamic>, String>>[
                 LineSeries<Map<String, dynamic>, String>(
-                  dataSource: _chartData,
-                  xValueMapper: (data, _) => data['mes'],
-                  yValueMapper: (data, _) => data['compras'],
-                  name: 'Compras',
-                ),
+                    dataSource: _chartData,
+                    xValueMapper: (data, _) => data['mes'],
+                    yValueMapper: (data, _) => data['compras'],
+                    name: 'Compras',
+                    color: Color(0xFF118dd5)),
                 LineSeries<Map<String, dynamic>, String>(
-                  dataSource: _chartData,
-                  xValueMapper: (data, _) => data['mes'],
-                  yValueMapper: (data, _) => data['ventas'],
-                  name: 'Ventas',
-                ),
+                    dataSource: _chartData,
+                    xValueMapper: (data, _) => data['mes'],
+                    yValueMapper: (data, _) => data['ventas'],
+                    name: 'Ventas',
+                    color: Color(0xFF81d3eb)),
               ],
             ),
           ),
@@ -157,7 +155,7 @@ class graficaLinealState extends State<graficaLineal> {
               Container(
                 width: 20,
                 height: 15,
-                color: Colors.blue,
+                color: Color(0xFF81d3eb),
               ),
               SizedBox(width: 5),
               Text(
@@ -168,7 +166,7 @@ class graficaLinealState extends State<graficaLineal> {
               Container(
                 width: 20,
                 height: 15,
-                color: Colors.pink,
+                color: Color(0xFF118dd5),
               ),
               SizedBox(width: 10),
               Text(
@@ -181,7 +179,6 @@ class graficaLinealState extends State<graficaLineal> {
       ),
     );
   }
-
 
   // Función para obtener el año desde el número de mes
   int _getYearFromMonth(int month) {
@@ -198,6 +195,9 @@ class graficaLinealState extends State<graficaLineal> {
   // Método para crear el selector de año
   Widget _buildYearSelector() {
     return DropdownButton<int>(
+
+      
+      
       value: _selectedYear,
       items: _getYearItems(), // Retorna los elementos del selector
       onChanged: (year) {
@@ -206,11 +206,14 @@ class graficaLinealState extends State<graficaLineal> {
         });
         _fetchChartData(); // Vuelve a obtener los datos para el nuevo año
       },
+
+      
     );
   }
 
-   // Función para obtener los años únicos de las listas de compras y ventas
-  void _getUniqueYears(List<Map<String, dynamic>> comprasList, List<Map<String, dynamic>> ventasList) {
+  // Función para obtener los años únicos de las listas de compras y ventas
+  void _getUniqueYears(List<Map<String, dynamic>> comprasList,
+      List<Map<String, dynamic>> ventasList) {
     _availableYears = [];
 
     for (var compra in comprasList) {
@@ -228,53 +231,58 @@ class graficaLinealState extends State<graficaLineal> {
     }
   }
 
-
   // Método para obtener la lista de elementos del selector de año
- List<DropdownMenuItem<int>> _getYearItems() {
-  // Ordenar la lista de años de forma descendente
-  _availableYears.sort((a, b) => b.compareTo(a));
+  List<DropdownMenuItem<int>> _getYearItems() {
+    // Ordenar la lista de años de forma descendente
+    _availableYears.sort((a, b) => b.compareTo(a));
 
-  List<DropdownMenuItem<int>> yearItems = [];
-  for (int year in _availableYears) {
-    yearItems.add(
-      DropdownMenuItem<int>(
-        value: year,
-        child: Text(year.toString()),
+    List<DropdownMenuItem<int>> yearItems = [];
+    for (int year in _availableYears) {
+      yearItems.add(
+        DropdownMenuItem<int>(
+          value: year,
+          child: Text(year.toString()),
+        ),
+      );
+    }
+
+    return yearItems;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: ListView(
+        physics: NeverScrollableScrollPhysics(), // Desactiva el scroll
+        children: [
+          SizedBox(
+            height: 30,
+          ),
+          Center(
+            child: Text(
+              'Compras y ventas', // Título de la gráfica
+              style: TextStyle(
+                fontSize: 30,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          Wrap(
+            alignment: WrapAlignment.end, // Alineación a la derecha
+            children: [
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
+                child: _buildYearSelector(),
+              ),
+            ],
+          ),
+          SizedBox(
+            width: double.maxFinite,
+            height: 300,
+            child: _buildLineChart(),
+          ),
+        ],
       ),
     );
   }
-
-  return yearItems;
 }
-
-@override
-Widget build(BuildContext context) {
-  return Scaffold(
-    body: ListView(
-      physics: NeverScrollableScrollPhysics(), // Desactiva el scroll
-      children: [
-        Text(
-            'Gráfica Compras y ventas', // Título de la gráfica
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        Wrap(
-          alignment: WrapAlignment.end, // Alineación a la derecha
-          children: [
-            Container(
-              padding: EdgeInsets.all(8),
-              child: _buildYearSelector(),
-            ),
-          ],
-        ),
-        SizedBox(
-          width: double.infinity,
-          height: 300,
-          child: _buildLineChart(),
-        ),
-      ],
-    ),
-  );
-}}
