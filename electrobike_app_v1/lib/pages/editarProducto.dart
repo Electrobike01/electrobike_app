@@ -103,7 +103,7 @@ class _ActualizarProductoState extends State<ActualizarProducto> {
         context,
         duration: FlutterToastr.lengthLong,
         position: FlutterToastr.bottom,
-        backgroundColor: Color(0xFFd53b3b),
+        backgroundColor: Color(0xFFf27474),
       );
       Navigator.of(context).pop(false);
       return false;
@@ -116,7 +116,7 @@ class _ActualizarProductoState extends State<ActualizarProducto> {
         context,
         duration: FlutterToastr.lengthLong,
         position: FlutterToastr.bottom,
-        backgroundColor: Color(0xFFd53b3b),
+        backgroundColor: Color(0xFFf27474),
       );
       setState(() {
         _isLoading = false;
@@ -166,7 +166,7 @@ class _ActualizarProductoState extends State<ActualizarProducto> {
           context,
           duration: FlutterToastr.lengthLong,
           position: FlutterToastr.bottom,
-          backgroundColor: Color.fromARGB(255, 206, 233, 207),
+          backgroundColor: Color(0xFF56baed),
         );
         Navigator.pop(context, true);
         _timer?.cancel();
@@ -200,7 +200,7 @@ class _ActualizarProductoState extends State<ActualizarProducto> {
         context,
         duration: FlutterToastr.lengthLong,
         position: FlutterToastr.bottom,
-        backgroundColor: Color(0xFFd53b3b),
+        backgroundColor:  Color(0xFFf27474),
       );
       Navigator.of(context).pop(false);
 
@@ -213,7 +213,7 @@ class _ActualizarProductoState extends State<ActualizarProducto> {
         context,
         duration: FlutterToastr.lengthLong,
         position: FlutterToastr.bottom,
-        backgroundColor: Color(0xFFd53b3b),
+        backgroundColor: Color(0xFFf27474),
       );
     });
 
@@ -227,11 +227,11 @@ class _ActualizarProductoState extends State<ActualizarProducto> {
     if (!isUnique) {
       _timer?.cancel();
       FlutterToastr.show(
-        "El producto ya existe",
+        "El producto ya fue registrado",
         context,
         duration: FlutterToastr.lengthLong,
         position: FlutterToastr.bottom,
-        backgroundColor: Colors.red,
+        backgroundColor: Color(0xFFf27474),
       );
       setState(() {
         _isLoading = false;
@@ -246,7 +246,7 @@ class _ActualizarProductoState extends State<ActualizarProducto> {
               FlutterToastr.show("Producto actualizado", context,
                   duration: FlutterToastr.lengthLong,
                   position: FlutterToastr.bottom,
-                  backgroundColor: Color.fromARGB(255, 206, 233, 207)),
+                  backgroundColor: Color(0xFF56baed)),
               Navigator.pop(context, true)
             });
     setState(() {
@@ -341,8 +341,6 @@ class _ActualizarProductoState extends State<ActualizarProducto> {
                                   ),
                                 ),
                               ),
-                              // SizedBox(
-                              //     height: 10.0), // Espacio entre los campos del formulario
                               Padding(
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 30.0, vertical: 5.0),
@@ -513,7 +511,8 @@ class _ActualizarProductoState extends State<ActualizarProducto> {
                                         style: ElevatedButton.styleFrom(
                                             fixedSize: Size(200.0, 50),
                                             elevation: 20.0,
-                                            backgroundColor: Colors.red),
+                                            backgroundColor: Color(0xFFbb2d3b),
+                                            ),
                                         onPressed: () {
                                           setState(() {
                                             _isLoading = true;

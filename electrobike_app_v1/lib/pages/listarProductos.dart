@@ -49,18 +49,18 @@ class _ListarProductosState extends State<ListarProductos> {
         context,
         duration: FlutterToastr.lengthLong,
         position: FlutterToastr.bottom,
-        backgroundColor: Color(0xFFd53b3b),
+        backgroundColor:  Color(0xFFf27474),
       );
     }
 
     // Iniciar el temporizador durante una duración fija
     _timer = Timer(Duration(seconds: 30), () {
       FlutterToastr.show(
-        "Tiempo de espera agotado al iniciar sesión",
+        "Tiempo de espera agotado",
         context,
         duration: FlutterToastr.lengthLong,
         position: FlutterToastr.bottom,
-        backgroundColor: Color(0xFFd53b3b),
+        backgroundColor: Color(0xFFf27474),
       );
       setState(() {
         _isLoading = false;
@@ -246,7 +246,7 @@ class _ListarProductosState extends State<ListarProductos> {
         context,
         duration: FlutterToastr.lengthLong,
         position: FlutterToastr.bottom,
-        backgroundColor: Color(0xFFd53b3b),
+        backgroundColor: Color(0xFFf27474),
       );
     } else {
       setState(() {

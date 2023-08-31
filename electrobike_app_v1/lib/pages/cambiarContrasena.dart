@@ -5,6 +5,8 @@ import '../controllers/controllerUsuario.dart';
 import 'dart:io';
 import 'dart:async';
 
+import '../models/modeloActualizarContrasena.dart';
+
 const azul = 0xFF118dd5;
 const gris = 0xFF1d1d1b;
 
@@ -21,8 +23,10 @@ class _cambiarContrasenaState extends State<cambiarContrasena> {
   bool _obscurePassword2 = true;
   bool _obscurePassword3 = true;
   TextEditingController contrasenaUsuarioController = TextEditingController();
-  TextEditingController nuevaContrasenaUsuarioController = TextEditingController();
-  TextEditingController confirmContrasenaUsuarioController = TextEditingController();
+  TextEditingController nuevaContrasenaUsuarioController =
+      TextEditingController();
+  TextEditingController confirmContrasenaUsuarioController =
+      TextEditingController();
   bool _isLoading = false;
   Timer? _timer;
 
@@ -38,7 +42,7 @@ class _cambiarContrasenaState extends State<cambiarContrasena> {
     return false; // No hay conexión a internet
   }
 
-  Future<bool> editarPass(Map<String, dynamic> data) async {
+  Future<bool> editarPass(ModeloContrasena modeloContrasena) async {
     bool isConnected = await checkInternetConnection();
     if (!isConnected) {
       FlutterToastr.show(
@@ -46,8 +50,12 @@ class _cambiarContrasenaState extends State<cambiarContrasena> {
         context,
         duration: FlutterToastr.lengthLong,
         position: FlutterToastr.bottom,
-        backgroundColor: Color(0xFFd53b3b),
+        backgroundColor: Color(0xFFf27474),
       );
+      setState(() {
+        _isLoading = false;
+      });
+      _timer?.cancel();
       return false;
     }
 
@@ -58,38 +66,40 @@ class _cambiarContrasenaState extends State<cambiarContrasena> {
         context,
         duration: FlutterToastr.lengthLong,
         position: FlutterToastr.bottom,
-        backgroundColor: Color(0xFFd53b3b),
+        backgroundColor: Color(0xFFf27474),
       );
       setState(() {
         _isLoading = false;
       });
     });
-    int idUsuario = data['idUsuario'];
-    String contrasenaActual = data['contrasenaActual'];
+    final prefs_ = await SharedPreferences.getInstance();
+    int idUsuario = prefs_.getInt('idUsuario') ?? -1;
+    String contrasenaActual = contrasenaUsuarioController.text; 
 
     bool isUnique =
         await UserController().validarContrasena(idUsuario, contrasenaActual);
     if (!isUnique) {
-      // Cancelar el temporizador despues de inicar sesion
+      // Cancelar el temporizador despues
       _timer?.cancel();
       FlutterToastr.show(
         "Error de identidad, no se puede registrar",
         context,
         duration: FlutterToastr.lengthLong,
         position: FlutterToastr.bottom,
-        backgroundColor: Colors.red,
+        backgroundColor:  Color(0xFFf27474),
       );
       setState(() {
         _isLoading = false;
       });
       return false;
     }
-    await UserController().actualizarContrasena(data).then((Success) => {
-          FlutterToastr.show("Producto actualizado", context,
+    await UserController().actualizarContrasena(modeloContrasena).then((Success) => {
+          FlutterToastr.show("Contraseña actualizada correctamente", context,
               duration: FlutterToastr.lengthLong,
               position: FlutterToastr.bottom,
-              backgroundColor: Color.fromARGB(255, 206, 233, 207)),
-          // Cancelar el temporizador despues de inicar sesion
+              backgroundColor:  Color(0xFF56baed),
+              ),
+          // Cancelar el temporizador despues
           _timer?.cancel(),
           Navigator.pop(context, true)
         });
@@ -325,22 +335,25 @@ class _cambiarContrasenaState extends State<cambiarContrasena> {
                                   } else {
                                     final prefs =
                                         await SharedPreferences.getInstance();
-                                    final idUsuario =
-                                        prefs.getInt('idUsuario') ?? -1;
-                                    Map<String, dynamic> data = {
-                                      'idUsuario': idUsuario,
-                                      'contrasenaActual':
-                                          contrasenaUsuarioController.text,
-                                      'contrasenaNueva':
-                                          nuevaContrasenaUsuarioController.text,
-                                    };
-                                    editarPass(data);
+                                    final idUsuario_ = prefs.getInt('idUsuario');
+
+                                    ModeloContrasena modeloContrasena = ModeloContrasena(
+                                        idUsuario: idUsuario_.toString(),
+                                        contrasenaUsuario: nuevaContrasenaUsuarioController.text
+                                    );
+                                    // Map<String, dynamic> data = {
+                                    //   'idUsuario': idUsuario,
+                                    //   'contrasenaActual': contrasenaUsuarioController.text,
+                                    //   'contrasenaNueva': nuevaContrasenaUsuarioController.text,
+                                    // };
+                                    editarPass(modeloContrasena);
                                   }
                                 }
                               },
                               child: Text('Guardar'),
                             ),
                     ),
+                    SizedBox(height: 40.0),
                   ],
                 ),
               ),

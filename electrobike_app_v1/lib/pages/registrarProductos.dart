@@ -67,7 +67,7 @@ class _RegistrarProductosState extends State<RegistrarProductos> {
         context,
         duration: FlutterToastr.lengthLong,
         position: FlutterToastr.bottom,
-        backgroundColor: Color(0xFFd53b3b),
+        backgroundColor: Color(0xFFf27474),
       );
 
       return false;
@@ -80,7 +80,7 @@ class _RegistrarProductosState extends State<RegistrarProductos> {
         context,
         duration: FlutterToastr.lengthLong,
         position: FlutterToastr.bottom,
-        backgroundColor: Color(0xFFd53b3b),
+        backgroundColor: Color(0xFFf27474),
       );
       setState(() {
         _isLoading = false;
@@ -90,7 +90,8 @@ class _RegistrarProductosState extends State<RegistrarProductos> {
     String nombreProducto = nombreProductoController.text.trim();
     String categoriaProducto = categoriaProductoController.text.trim();
 
-    bool isUnique = await ControllerProductos().ValidarProducto(nombreProducto, categoriaProducto);
+    bool isUnique = await ControllerProductos()
+        .ValidarProducto(nombreProducto, categoriaProducto);
     _timer?.cancel();
 
     if (!isUnique) {
@@ -99,7 +100,7 @@ class _RegistrarProductosState extends State<RegistrarProductos> {
         context,
         duration: FlutterToastr.lengthLong,
         position: FlutterToastr.bottom,
-        backgroundColor: Colors.red,
+        backgroundColor: Color(0xFFf27474),
       );
       setState(() {
         _isLoading = false;
@@ -109,10 +110,13 @@ class _RegistrarProductosState extends State<RegistrarProductos> {
 
     await ControllerProductos().addProducto(modeloProducto).then((Success) => {
           _timer?.cancel(),
-          FlutterToastr.show("Producto registrado", context,
-              duration: FlutterToastr.lengthLong,
-              position: FlutterToastr.bottom,
-              backgroundColor: Colors.green),
+          FlutterToastr.show(
+            "Producto registrado correctamente",
+            context,
+            duration: FlutterToastr.lengthLong,
+            position: FlutterToastr.bottom,
+            backgroundColor: Color(0xFF56baed),
+          ),
           setState(() {
             _isLoading = false;
           }),
@@ -259,6 +263,7 @@ class _RegistrarProductosState extends State<RegistrarProductos> {
                           },
                           child: Text('Guardar'),
                         ),
+                  SizedBox(height: 40.0),
                 ],
               ),
             )

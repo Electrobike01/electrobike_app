@@ -1,22 +1,22 @@
 class VerPerfilModel {
-  int idUsuario;
-  String nombreUsuario;
-  String? tipoDocumentoUsuario;
-  String? documentoUsuario;
-  String correoUsuario;
-  String? contrasenaUsuario;
-  String estadoUsuario;
-  int? idRol;
-  String? nombreRol;
+  final idUsuario;
+  final nombreUsuario;
+  final tipoDocumentoUsuario;
+  final documentoUsuario;
+  final correoUsuario;
+  final contrasenaUsuario;
+  final estadoUsuario;
+  final idRol;
+  final nombreRol;
 
   VerPerfilModel({
-    required this.idUsuario,
-    required this.nombreUsuario,
+    this.idUsuario,  
+    this.nombreUsuario,
     this.tipoDocumentoUsuario,
     this.documentoUsuario,
-    required this.correoUsuario,
+    this.correoUsuario,
     this.contrasenaUsuario,
-    required this.estadoUsuario,
+    this.estadoUsuario,
     this.idRol,
     this.nombreRol,
   });

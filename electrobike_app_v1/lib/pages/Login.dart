@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_toastr/flutter_toastr.dart';
 import '../controllers/controllerUsuario.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../widgets/recuperacionContrasena.dart';
 import 'home.dart';
 import 'dart:io';
 import 'dart:async';
@@ -45,7 +46,7 @@ class _LoginState extends State<Login> {
         context,
         duration: FlutterToastr.lengthLong,
         position: FlutterToastr.bottom,
-        backgroundColor: Color(0xFFd53b3b),
+        backgroundColor: Color(0xFFf27474),
       );
       setState(() {
         _isLoading = false;
@@ -60,7 +61,7 @@ class _LoginState extends State<Login> {
         context,
         duration: FlutterToastr.lengthLong,
         position: FlutterToastr.bottom,
-        backgroundColor: Color(0xFFd53b3b),
+        backgroundColor: Color(0xFFf27474),
       );
       setState(() {
         _isLoading = false;
@@ -73,7 +74,7 @@ class _LoginState extends State<Login> {
     // bool success = await _userController.Login(email, password);
     Map<String, dynamic> response =
         await _userController.Login(email, password);
-    print('Respuesta: $response');
+    // print('Respuesta: $response');
     bool success = response['success'];
     // Cancelar el temporizador despues de inicar sesion
     _timer?.cancel();
@@ -99,7 +100,7 @@ class _LoginState extends State<Login> {
         context,
         duration: 3,
         position: FlutterToastr.bottom,
-        backgroundColor: Color(0xFFd53b3b),
+        backgroundColor: Color(0xFFf27474),
       );
     }
     setState(() {
@@ -171,7 +172,7 @@ class _LoginState extends State<Login> {
                           controller: emailUsuario,
                           validator: (value) {
                             if (value!.trim().isEmpty) {
-                              return "Este campo es obligatorio";
+                              return "Ingrese el correo electronico";
                             }
                             bool emailValid =
                                 RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
@@ -207,7 +208,7 @@ class _LoginState extends State<Login> {
                           controller: passUsuario,
                           validator: (value) {
                             if (value!.trim().isEmpty) {
-                              return "Este campo es obligatorio";
+                              return "Ingrese la contraseña";
                             }
                             return null;
                           },
@@ -274,9 +275,28 @@ class _LoginState extends State<Login> {
                       ],
                     ),
                   ),
+                  GestureDetector(
+                    onTap: () {
+                      // Navegar a la pantalla de solicitud de restablecimiento de contraseña
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => RecuperarContrasenaPage(),
+                        ),
+                      );
+                    },
+                    child: Text(
+                      '¿Olvidaste tu contraseña?',
+                      style: TextStyle(
+                        color: Colors.blue,
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                  )
                 ],
               ),
             ),
+            SizedBox(height: 80),
           ],
         ),
       ),

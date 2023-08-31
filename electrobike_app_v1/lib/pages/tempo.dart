@@ -28,7 +28,6 @@ class _VerPerfilState extends State<VerPerfil> {
 
   // Se crean los controladores
   final _userController = UserController();
-  // TextEditingController idUsuarioController TextEditingController();
   TextEditingController nombreUsuarioController = TextEditingController();
   TextEditingController tipoDocumentoController = TextEditingController();
   TextEditingController documentoUsuarioController = TextEditingController();
@@ -174,8 +173,7 @@ class _VerPerfilState extends State<VerPerfil> {
       });
     });
 
-    final prefs_ = await SharedPreferences.getInstance();
-    int idUsuario = prefs_.getInt('idUsuario') ?? -1;
+    int idUsuario = userProfile.idUsuario;
     String documentoUsuario = userProfile.documentoUsuario;
 
     bool isUnique = await UserController()
@@ -197,36 +195,25 @@ class _VerPerfilState extends State<VerPerfil> {
       return;
     }
 
-    // print(userProfile.idUsuario);
-    // print(userProfile.idUsuario.runtimeType);
-    // print(userProfile.nombreUsuario);
-    // print(userProfile.tipoDocumentoUsuario);
-    // print(userProfile.documentoUsuario);
-    // print(userProfile.correoUsuario);
-    // print(userProfile.estadoUsuario);
-    // print(userProfile.idRol);
-    // print(userProfile.idRol.runtimeType);
-
     try {
-      await UserController().actualizarPerfil(userProfile).then((Success) => {
-            _timer?.cancel(),
-            FlutterToastr.show("Perfil actualizado", context,
-                duration: FlutterToastr.lengthLong,
-                position: FlutterToastr.bottom,
-                backgroundColor: Color(0xFF56baed)),
-            Navigator.pop(context, true)
-          });
-      setState(() {
-        _isLoading = false;
+      // Encapsula la llamada a actualizarPerfil en un bloque try-catch
+      await UserController().actualizarPerfil(userProfile).then((success) {
+        // Cancelar el temporizador después de iniciar sesión
+        _timer?.cancel();
+        FlutterToastr.show("Perfil actualizado", context,
+            duration: FlutterToastr.lengthLong,
+            position: FlutterToastr.bottom,
+            backgroundColor: Color(0xFF56baed));
+        Navigator.pop(context, true);
       });
     } catch (e) {
+      // Maneja cualquier excepción que ocurra durante la actualización del perfil
+      // Aquí puedes mostrar un mensaje de error o realizar alguna acción adicional.
       print("Error de formulario: $e");
-
       setState(() {
         _isLoading = false;
       });
     }
-
 
     setState(() {
       _isLoading = false;
@@ -544,19 +531,35 @@ class _VerPerfilState extends State<VerPerfil> {
                             } else {
                               final prefs =
                                   await SharedPreferences.getInstance();
+                              // int idUsuario_ = prefs.getInt('idUsuario') ?? -1;
+                              // int idRol_ = int.parse(idRolController.text);
                               int idUsuario_ = prefs.getInt('idUsuario') ?? -1;
 
+                              // String idUsuarioString = idUsuario_.toString();
+
+                              print(
+                                  "El id usuario es: ${idUsuario_.runtimeType}");
+                              // print( "El nombre U es: ${nombreUsuario_.runtimeType}");
+                              // print( "El tipoDoc es: ${tipoDocumentoUsuario_.runtimeType}");
+                              // print("El documento es: ${documentoUsuario_.runtimeType}");
+                              // print("El correo es: ${correoUsuario_.runtimeType}");
+                              // print("El estado es es: ${estadoUsuario_.runtimeType}");
+                              final _idRol_ = idRolController.text;
+                              print("El idRol es: ${_idRol_.runtimeType}");
+
                               UserProfileModel userProfile = UserProfileModel(
-                                idUsuario: idUsuario_.toString(),
-                                nombreUsuario: nombreUsuarioController.text,
+                                idUsuario: idUsuario_,
+                                nombreUsuario:
+                                    nombreUsuarioController.text.trim(),
                                 tipoDocumentoUsuario:
-                                    tipoDocumentoController.text,
+                                    tipoDocumentoController.text.trim(),
                                 documentoUsuario:
-                                    documentoUsuarioController.text,
-                                correoUsuario: correoUsuarioController.text,
-                                estadoUsuario: estadoUsuarioController.text,
-                                idRol: idRolController
-                                    .text, // No es necesario convertirlo a int
+                                    documentoUsuarioController.text.trim(),
+                                correoUsuario:
+                                    correoUsuarioController.text.trim(),
+                                estadoUsuario:
+                                    estadoUsuarioController.text.trim(),
+                                idRol: int.parse(idRolController.text.trim()),
                               );
 
                               editarUser(userProfile);

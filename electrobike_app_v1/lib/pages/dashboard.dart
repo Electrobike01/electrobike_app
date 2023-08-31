@@ -5,6 +5,9 @@ import 'package:electrobike_app_v1/widgets/graficaProductos.dart';
 import '../widgets/graficaBarrasTop5Productos.dart';
 import '../widgets/recuadrosDashboard.dart';
 import '../widgets/graficaTopClientes.dart';
+import 'package:flutter_toastr/flutter_toastr.dart';
+import 'dart:io';
+import 'dart:async';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -28,6 +31,45 @@ class _DashboardState extends State<Dashboard> {
     setState(() {
       _isRefreshing = false;
     });
+  }
+
+
+
+    Future<bool> checkInternetConnection() async {
+    try {
+      final result = await InternetAddress.lookup('example.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        return true; // Hay conexión a internet
+      }
+    } on SocketException catch (_) {
+      return false; // No hay conexión a internet
+    }
+    return false; // No hay conexión a internet
+  }
+
+  Future<bool> validarCon () async {
+     bool isConnected = await checkInternetConnection();
+    if (!isConnected) {
+      print('No hay internet');
+      FlutterToastr.show(
+        "Verifique su conexión a internet",
+        context,
+        duration: FlutterToastr.lengthLong,
+        position: FlutterToastr.bottom,
+        backgroundColor:  Color(0xFFf27474),
+      );
+      // Navigator.of(context).pop(false);
+      return false;
+    }
+      return true;
+
+
+  }
+
+    @override
+  void initState() {
+    super.initState();
+    validarCon();
   }
 
   @override

@@ -36,31 +36,42 @@ class graficaProductosState extends State<graficaProductos> {
       Color.fromARGB(255, 0, 193, 252),
     ];
 
-    return AspectRatio(
-      aspectRatio:
-          1, // Ajustar la relación de aspecto para hacer la gráfica más grande
+       return AspectRatio(
+      aspectRatio: 1,
       child: PieChart(
         PieChartData(
-          centerSpaceRadius:
-              0, // Establecer el centro a 0 para eliminar el espacio en blanco
-          sections: _chartData.map((item) {
-            int index = _chartData.indexOf(item) % colors.length;
-            double value = item['cantidad'].toDouble();
-            double total =
-                _chartData.fold(0.0, (sum, item) => sum + item['cantidad']);
-            double percentage = (value / total) * 100;
+          centerSpaceRadius: 0,
+          sections: _chartData.isNotEmpty
+              ? _chartData.map((item) {
+                  int index = _chartData.indexOf(item) % colors.length;
+                  double value = item['cantidad'].toDouble();
+                  double total =
+                      _chartData.fold(0.0, (sum, item) => sum + item['cantidad']);
+                  double percentage = (value / total) * 100;
 
-            return PieChartSectionData(
-              value: value,
-              color: colors[index],
-              title:
-                  '${percentage.toStringAsFixed(2)}%', // Mostrar el porcentaje en la gráfica
-              showTitle:
-                  true, // Mostrar el título (porcentaje) dentro de la gráfica
-              titleStyle: TextStyle(fontSize: 12),
-              radius: 100, //tamaño de la grafica
-            );
-          }).toList(),
+                  return PieChartSectionData(
+                    value: value,
+                    color: colors[index],
+                    title: '${percentage.toStringAsFixed(2)}%',
+                    showTitle: true,
+                    titleStyle: TextStyle(fontSize: 12),
+                    radius: 100,
+                  );
+                }).toList()
+              : [
+                  PieChartSectionData(
+                    value: 100,
+                    color: Colors.blue,
+                    title: 'No hay resultados',
+                    showTitle: true,
+                    titleStyle: TextStyle(
+                      fontSize: 12,
+                      color: Colors.white,
+                    ),
+                    titlePositionPercentageOffset: 0.0,
+                    radius: 100,
+                  ),
+                ],
         ),
       ),
     );
@@ -101,6 +112,9 @@ class graficaProductosState extends State<graficaProductos> {
 
   @override
   Widget build(BuildContext context) {
+    final isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final chartHeight = isPortrait ? screenHeight * 0.35 : screenHeight * 0.8;
     return Scaffold(
       body: Column(
         children: [
@@ -114,11 +128,10 @@ class graficaProductosState extends State<graficaProductos> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          Container(
-            padding: const EdgeInsets.all(8),
-            child: _chartData.isNotEmpty
-                ? _buildPieChart()
-                : CircularProgressIndicator(),
+           Container(
+            height: chartHeight,
+            padding: const EdgeInsets.all(15),
+            child: _buildPieChart(),
           ),
           // Widget de la leyenda
           _buildLegend(),
@@ -127,3 +140,9 @@ class graficaProductosState extends State<graficaProductos> {
     );
   }
 }
+
+
+
+
+
+

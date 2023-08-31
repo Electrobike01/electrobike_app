@@ -60,7 +60,7 @@ class infoPerfilState extends State<infoPerfil> {
         context,
         duration: FlutterToastr.lengthLong,
         position: FlutterToastr.bottom,
-        backgroundColor: Color(0xFFd53b3b),
+        backgroundColor:  Color(0xFFf27474),
       );
     }
 
@@ -71,7 +71,7 @@ class infoPerfilState extends State<infoPerfil> {
         context,
         duration: FlutterToastr.lengthLong,
         position: FlutterToastr.bottom,
-        backgroundColor: Color(0xFFd53b3b),
+        backgroundColor:  Color(0xFFf27474),
       );
       setState(() {
         _isLoading = false;
