@@ -255,9 +255,12 @@ class _ActualizarProductoState extends State<ActualizarProducto> {
     _timer?.cancel();
     return true;
   }
+  
 
   @override
+
   Widget build(BuildContext context) {
+    
     return FutureBuilder<bool>(
         future: validarEliminar(),
         builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
@@ -294,6 +297,7 @@ class _ActualizarProductoState extends State<ActualizarProducto> {
                   ),
                   body: SingleChildScrollView(
                     child: Column(
+                      
                       children: [
                         SizedBox(height: 30.0),
                         Center(
@@ -386,9 +390,7 @@ class _ActualizarProductoState extends State<ActualizarProducto> {
                                 child: TextFormField(
                                   controller: cantidadProductoController,
                                   keyboardType: TextInputType.number,
-                                  readOnly:
-                                      true, // Deshabilitar el campo de entrada
-
+                                  readOnly: true, // Deshabilitar el campo de entrada
                                   validator: (value) {
                                     if (value!.trim().isEmpty) {
                                       return "Este campo es obligatorio";
@@ -475,24 +477,13 @@ class _ActualizarProductoState extends State<ActualizarProducto> {
                                           });
                                           ModeloProducto modeloProducto =
                                               ModeloProducto(
-                                            idProducto: idProductoController
-                                                .text
-                                                .trim(),
-                                            nombreProducto:
-                                                nombreProductoController.text
-                                                    .trim(),
-                                            cantidadProducto:
-                                                cantidadProductoController.text
-                                                    .trim(),
-                                            categoriaProducto:
-                                                categoriaProductoController.text
-                                                    .trim(),
-                                            estadoProducto:
-                                                estadoProductoController.text
-                                                    .trim(),
-                                          );
-                                          bool isAdded =
-                                              await editProduct(modeloProducto);
+                                              idProducto: idProductoController .text.trim(),
+                                              nombreProducto: nombreProductoController.text.trim(),
+                                              cantidadProducto:cantidadProductoController.text.trim(),
+                                              categoriaProducto: categoriaProductoController.text.trim(),
+                                              estadoProducto: estadoProductoController.text.trim(),
+                                            );
+                                          bool isAdded = await editProduct(modeloProducto);
                                           if (isAdded) {
                                             nombreProductoController.clear();
                                             cantidadProductoController.clear();

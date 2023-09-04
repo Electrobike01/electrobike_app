@@ -46,7 +46,7 @@ class _VerPerfilState extends State<VerPerfil> {
       },
       {
         'value': 'Cedula Extranjera',
-        'label': 'Cédula extranjera',
+        'label': 'Cédula Extranjera',
       },
       {
         'value': 'Pasaporte',
@@ -196,17 +196,6 @@ class _VerPerfilState extends State<VerPerfil> {
       });
       return;
     }
-
-    // print(userProfile.idUsuario);
-    // print(userProfile.idUsuario.runtimeType);
-    // print(userProfile.nombreUsuario);
-    // print(userProfile.tipoDocumentoUsuario);
-    // print(userProfile.documentoUsuario);
-    // print(userProfile.correoUsuario);
-    // print(userProfile.estadoUsuario);
-    // print(userProfile.idRol);
-    // print(userProfile.idRol.runtimeType);
-
     try {
       await UserController().actualizarPerfil(userProfile).then((Success) => {
             _timer?.cancel(),

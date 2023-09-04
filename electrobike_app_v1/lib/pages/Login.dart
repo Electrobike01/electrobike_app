@@ -1,3 +1,4 @@
+// ================================ IMPORTACIONES ============================= 
 import 'package:flutter/material.dart';
 import 'package:flutter_toastr/flutter_toastr.dart';
 import '../controllers/controllerUsuario.dart';
@@ -6,7 +7,6 @@ import '../widgets/recuperacionContrasena.dart';
 import 'home.dart';
 import 'dart:io';
 import 'dart:async';
-import 'dart:convert';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -17,6 +17,7 @@ class Login extends StatefulWidget {
 
 const azul = 0xFF118dd5;
 
+
 class _LoginState extends State<Login> {
   bool _obscurePassword = true;
   bool _isLoading = false;
@@ -26,6 +27,7 @@ class _LoginState extends State<Login> {
   final UserController _userController = UserController();
   Timer? _timer;
 
+  // Metodo para validar si hay conexion a internet
   Future<bool> checkInternetConnection() async {
     try {
       final result = await InternetAddress.lookup('example.com');
@@ -38,7 +40,9 @@ class _LoginState extends State<Login> {
     return false; // No hay conexión a internet
   }
 
+  // Metodo para iniciar sesion
   Future<bool> iniciarSesion(Map<String, dynamic> dataLogin) async {
+    // Se llama el metodo iniciar sesion
     bool isConnected = await checkInternetConnection();
     if (!isConnected) {
       FlutterToastr.show(
@@ -54,7 +58,7 @@ class _LoginState extends State<Login> {
       return false;
     }
 
-    // Iniciar el temporizador durante una duración fija
+    // Iniciar el temporizador con una duración fija
     _timer = Timer(Duration(seconds: 30), () {
       FlutterToastr.show(
         "Tiempo de espera agotado",
@@ -68,20 +72,17 @@ class _LoginState extends State<Login> {
       });
     });
 
-    // Inicio de inicio de sesión
+    // ----------------- Inicio de inicio de sesión -------------------------------
     String email = dataLogin['emailUsuario'];
     String password = dataLogin['contrasenaUsuario'];
-    // bool success = await _userController.Login(email, password);
-    Map<String, dynamic> response =
-        await _userController.Login(email, password);
-    // print('Respuesta: $response');
+
+    Map<String, dynamic> response = await _userController.Login(email, password);
     bool success = response['success'];
-    // Cancelar el temporizador despues de inicar sesion
     _timer?.cancel();
 
     if (success == true) {
-      // print('se puede');
       int idUsuario = response['idUsuario'];
+
       // Guardar el idUsuario en SharedPreferences
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setInt('idUsuario', idUsuario);
@@ -91,8 +92,6 @@ class _LoginState extends State<Login> {
       );
       return true;
     } else if (success == false) {
-      // Map<String, dynamic> jsonResponse = json.decode(success.m);
-      // message = jsonResponse['message'];
       String message = response['message'];
 
       FlutterToastr.show(
@@ -128,25 +127,35 @@ class _LoginState extends State<Login> {
         child: Column(
           children: [
             Container(
-              width: double.infinity,
-              height: 120,
+          width: double.infinity,
+          height: 120,
+          decoration: BoxDecoration(
+            color: Color(azul),
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.elliptical(60, 60),
+            ),
+          ),
+          child: Center(
+            child: Container(
+              width: 100, // Tamaño deseado del círculo
+              height: 100,
               decoration: BoxDecoration(
-                color: Color(azul),
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.elliptical(60, 60),
-                ),
+                shape: BoxShape.circle,
+                color: Colors.white, // Fondo blanco para el círculo
               ),
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 20.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.white,
+              child: Center(
+                child: ClipOval(
+                  child: Image.asset(
+                    'assets/img/Logo_electrobike.png',
+                    width: 90, // Tamaño deseado de la imagen dentro del círculo
+                    height: 90,
+                    fit: BoxFit.cover, // Ajustar la imagen para cubrir el círculo
                   ),
-                  child: Icon(Icons.person, size: 50),
                 ),
               ),
             ),
+          ),
+        ),
             SizedBox(height: 40),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 40.0),
@@ -174,9 +183,7 @@ class _LoginState extends State<Login> {
                             if (value!.trim().isEmpty) {
                               return "Ingrese el correo electronico";
                             }
-                            bool emailValid =
-                                RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                                    .hasMatch(value.trim());
+                            bool emailValid = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value.trim());
                             if (!emailValid) {
                               return 'Por favor ingrese un correo electrónico válido';
                             }
@@ -186,20 +193,18 @@ class _LoginState extends State<Login> {
                             hintText: 'Email',
                             labelText: 'Ingrese su correo electronico',
                             enabledBorder: OutlineInputBorder(
-                              borderSide:
-                                  BorderSide(width: 3, color: Color(azul)),
+                              borderSide: BorderSide(width: 3, color: Color(azul),
+                              ),
                             ),
                             focusedBorder: OutlineInputBorder(
-                              borderSide:
-                                  BorderSide(width: 3, color: Color(azul)),
+                              borderSide: BorderSide(width: 3, color: Color(azul),
+                              ),
                             ),
                             errorBorder: OutlineInputBorder(
-                              borderSide:
-                                  BorderSide(width: 3, color: Colors.red),
+                              borderSide:BorderSide(width: 3, color: Colors.red),
                             ),
                             focusedErrorBorder: OutlineInputBorder(
-                              borderSide:
-                                  BorderSide(width: 3, color: Colors.red),
+                              borderSide: BorderSide(width: 3, color: Colors.red),
                             ),
                           ),
                         ),
@@ -262,8 +267,7 @@ class _LoginState extends State<Login> {
                                         _isLoading = true;
                                       });
                                       Map<String, dynamic> dataLogin = {
-                                        'emailUsuario':
-                                            emailUsuario.text.trim(),
+                                        'emailUsuario': emailUsuario.text.trim(),
                                         'contrasenaUsuario': passUsuario.text,
                                       };
                                       iniciarSesion(dataLogin);

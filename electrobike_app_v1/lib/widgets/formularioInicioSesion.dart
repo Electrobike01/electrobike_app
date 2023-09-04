@@ -19,16 +19,27 @@ class FormularioInicioSesion extends StatelessWidget {
               bottomLeft: Radius.elliptical(60, 60),
             ),
           ),
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: 20.0),
+          child: Center(
             child: Container(
-              decoration:
-                  BoxDecoration(shape: BoxShape.circle, color: Colors.white),
-              child: Icon(Icons.person, size: 50),
+              width: 100, // Tamaño deseado del círculo
+              height: 100,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white, // Fondo blanco para el círculo
+              ),
+              child: Center(
+                child: ClipOval(
+                  child: Image.asset(
+                    'assets/img/Logo_electrobike.png',
+                    width: 90, // Tamaño deseado de la imagen dentro del círculo
+                    height: 90,
+                    fit: BoxFit.cover, // Ajustar la imagen para cubrir el círculo
+                  ),
+                ),
+              ),
             ),
           ),
         ),
-        
         SizedBox(height: 40),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 40.0),
@@ -44,14 +55,10 @@ class FormularioInicioSesion extends StatelessWidget {
                 style: TextStyle(fontSize: 17),
               ),
               SizedBox(height: 50),
-
               inputFormEmail(),
               SizedBox(height: 20),
-
-
               inputFormContrasena(),
               SizedBox(height: 60),
-
               ElevatedButton(
                 style: TextButton.styleFrom(
                   backgroundColor: Color(azul),
@@ -60,9 +67,9 @@ class FormularioInicioSesion extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12.0),
                   ),
                 ),
-                child: Text('Iniciar Sesion'),
+                child: Text('Iniciar Sesión'),
                 onPressed: () {
-                  print('inicia sesion');
+                  print('inicia sesión');
                   // Navegar a la siguiente página cuando el botón sea presionado
                   Navigator.push(
                     context,
@@ -77,6 +84,7 @@ class FormularioInicioSesion extends StatelessWidget {
     );
   }
 }
+
 
 Widget inputFormEmail() {
   return Column(

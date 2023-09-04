@@ -7,6 +7,7 @@ import 'package:electrobike_app_v1/models/modeloProductos.dart';
 class ControllerProductos {
 
   String dir = "http://192.168.0.4/apiElectrobike_app/";
+
   // Obtener los datos para el grafico de torta
   Future<List<Map<String, dynamic>>> getChartData() async {
     String url =
@@ -50,38 +51,38 @@ class ControllerProductos {
     }
   }
 
-Future<List<Map<String, dynamic>>> getTopProductos({required int year, required int month}) async {
-  String url = 
-  "https://electrobike-adso.000webhostapp.com/apiElectrobike_app/productos/5productos.php?year=$year&month=$month";
-  // "http://192.168.0.4/apiElectrobike_app/productos/5productos.php?year=$year&month=$month";
-  print(url);
-  final response = await http.get(Uri.parse(url));
-  print(response.body);
-  
-
-  if (response.statusCode == 200) {
-    Map<String, dynamic> Data = json.decode(response.body);
-    List<Map<String, dynamic>> productos = List<Map<String, dynamic>>.from(Data['productos']);
-    return productos;
-  } else {
-    return [];
+  // Obtener los datos de los productos mas vendidos 
+  Future<List<Map<String, dynamic>>> getTopProductos({required int year, required int month}) async {
+    String url = 
+    "https://electrobike-adso.000webhostapp.com/apiElectrobike_app/productos/5productos.php?year=$year&month=$month";
+    // "http://192.168.0.4/apiElectrobike_app/productos/5productos.php?year=$year&month=$month";
+    // print(url);
+    final response = await http.get(Uri.parse(url));
+    // print(response.body);
+    if (response.statusCode == 200) {
+      Map<String, dynamic> Data = json.decode(response.body);
+      List<Map<String, dynamic>> productos = List<Map<String, dynamic>>.from(Data['productos']);
+      return productos;
+    } else {
+      return [];
+    }
   }
-}
 
-Future<List<Map<String, dynamic>>> getTopClientes({required int year, required int month}) async {
-  String url = 
-  "https://electrobike-adso.000webhostapp.com/apiElectrobike_app/productos/5clientes.php?year=$year&month=$month";
-  // "http://192.168.0.4/apiElectrobike_app/productos/5clientes.php?year=$year&month=$month";
-  final response = await http.get(Uri.parse(url));
+  // Obtener los datos de la grafica top clientes
+  Future<List<Map<String, dynamic>>> getTopClientes({required int year, required int month}) async {
+    String url = 
+    "https://electrobike-adso.000webhostapp.com/apiElectrobike_app/productos/5clientes.php?year=$year&month=$month";
+    // "http://192.168.0.4/apiElectrobike_app/productos/5clientes.php?year=$year&month=$month";
+    final response = await http.get(Uri.parse(url));
 
-  if (response.statusCode == 200) {
-    Map<String, dynamic> data = json.decode(response.body);
-    List<Map<String, dynamic>> clientes = List<Map<String, dynamic>>.from(data['clientes']);
-    return clientes;
-  } else {
-    return [];
+    if (response.statusCode == 200) {
+      Map<String, dynamic> data = json.decode(response.body);
+      List<Map<String, dynamic>> clientes = List<Map<String, dynamic>>.from(data['clientes']);
+      return clientes;
+    } else {
+      return [];
+    }
   }
-}
 
   // Metodo para sacar los productos del Json
   List<ModeloProducto> productosFromJson(String jsonstring) {

@@ -4,7 +4,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../controllers/controllerUsuario.dart';
 import 'dart:io';
 import 'dart:async';
-
 import '../models/modeloActualizarContrasena.dart';
 
 const azul = 0xFF118dd5;
@@ -18,6 +17,7 @@ class cambiarContrasena extends StatefulWidget {
 }
 
 class _cambiarContrasenaState extends State<cambiarContrasena> {
+  
   final _formKey = GlobalKey<FormState>();
   bool _obscurePassword1 = true;
   bool _obscurePassword2 = true;

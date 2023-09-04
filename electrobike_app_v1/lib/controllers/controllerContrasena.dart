@@ -2,13 +2,13 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ControllerContrasena {
+  // Metodo recuperar contraseña
   Future<Map<String, dynamic>> recuperarContrasena(String email) async {
     final url = Uri.parse(
       'https://electrobike-adso.000webhostapp.com/apiElectrobike_app/contrasena/recuperarContrasena.php'
       // 'http://192.168.0.4/apiElectrobike_app/contrasena/recuperarContrasena.php'
       
       );
-  
     try {
       final response = await http.post(url, body: {'email': email});
 
@@ -23,7 +23,7 @@ class ControllerContrasena {
       throw Exception('Error en la solicitud HTTP: $e');
     }
   }
-
+    
   Future<Map<String, dynamic>> nuevaContrasena(String email, String nuevaContrasena, String confirmarContrasena) async {
     final url = Uri.parse(
       'https://electrobike-adso.000webhostapp.com/apiElectrobike_app/contrasena/nuevaContrasena.php'

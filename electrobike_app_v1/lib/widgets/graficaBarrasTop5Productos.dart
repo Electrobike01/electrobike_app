@@ -129,7 +129,7 @@ class _GraficaBarrasState extends State<GraficaBarrasP> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(width: 120),
+              SizedBox(width: 100),
               GestureDetector(
                 onTap: () => _selectDate(context),
                 child: Container(
