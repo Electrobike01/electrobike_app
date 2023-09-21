@@ -12,7 +12,7 @@ class ControllerProductos {
   Future<List<Map<String, dynamic>>> getChartData() async {
     String url =
         // "https://electrobike-adso.000webhostapp.com/apiElectrobike_app/productos/graficaTorta.php";
-        "https://electrobike-adso.000webhostapp.com/apiElectrobike_app/productos/graficaTorta.php";
+        "https://electrobike-adso-wild.000webhostapp.com/controllers/productos/Movil/graficaTortaMovil.php";
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
       List<Map<String, dynamic>> data =
@@ -26,7 +26,7 @@ class ControllerProductos {
   // Obtener los datos para la grafica lineal
   Future<Map<String, dynamic>> getComprasYVentasPorMes() async {
     String url =
-        "https://electrobike-adso.000webhostapp.com/apiElectrobike_app/productos/graficaLineal.php";
+        "https://electrobike-adso-wild.000webhostapp.com/controllers/productos/Movil/graficaLinealMovil.php";
         // "http://192.168.0.4/apiElectrobike_app/productos/graficaLineal.php";
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
@@ -40,7 +40,7 @@ class ControllerProductos {
   // Obtener los datos de las tarjetas del dashboard
   Future<Map<String, dynamic>> getRecuadros() async {
     String url =
-        "https://electrobike-adso.000webhostapp.com/apiElectrobike_app/productos/recuadros.php";
+        "https://electrobike-adso-wild.000webhostapp.com/controllers/productos/Movil/recuadrosMovil.php";
         // "http://192.168.0.4/apiElectrobike_app/productos/recuadros.php";
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
@@ -54,7 +54,7 @@ class ControllerProductos {
   // Obtener los datos de los productos mas vendidos 
   Future<List<Map<String, dynamic>>> getTopProductos({required int year, required int month}) async {
     String url = 
-    "https://electrobike-adso.000webhostapp.com/apiElectrobike_app/productos/5productos.php?year=$year&month=$month";
+    "https://electrobike-adso-wild.000webhostapp.com/controllers/productos/Movil/5productos.php?year=$year&month=$month";
     // "http://192.168.0.4/apiElectrobike_app/productos/5productos.php?year=$year&month=$month";
     // print(url);
     final response = await http.get(Uri.parse(url));
@@ -71,7 +71,7 @@ class ControllerProductos {
   // Obtener los datos de la grafica top clientes
   Future<List<Map<String, dynamic>>> getTopClientes({required int year, required int month}) async {
     String url = 
-    "https://electrobike-adso.000webhostapp.com/apiElectrobike_app/productos/5clientes.php?year=$year&month=$month";
+    "https://electrobike-adso-wild.000webhostapp.com/controllers/productos/Movil/5clientes.php?year=$year&month=$month";
     // "http://192.168.0.4/apiElectrobike_app/productos/5clientes.php?year=$year&month=$month";
     final response = await http.get(Uri.parse(url));
 
@@ -94,7 +94,7 @@ class ControllerProductos {
   // Trae los productos de la base de datos
   Future<List<ModeloProducto>> getProductos() async {
     String get_productos =
-        "https://electrobike-adso.000webhostapp.com/apiElectrobike_app/productos/listarProductos.php";
+        "https://electrobike-adso-wild.000webhostapp.com/controllers/productos/Movil/listarProductosMovil.php";
         // "http://192.168.0.4/apiElectrobike_app/productos/listarProductos.php";
     final response = await http.get(Uri.parse(get_productos));
     if (response.statusCode == 200) {
@@ -108,7 +108,7 @@ class ControllerProductos {
   // Registrar productos a la  base de datos
   Future<String> addProducto(ModeloProducto ModeloProducto) async {
     String set_productos =
-        "https://electrobike-adso.000webhostapp.com/apiElectrobike_app/productos/registrarProductos.php";
+        "https://electrobike-adso-wild.000webhostapp.com/controllers/productos/Movil/registrarProductosMovil.php";
         // "http://192.168.0.4/apiElectrobike_app/productos/registrarProductos.php";
     final response = await http.post(Uri.parse(set_productos),
         body: ModeloProducto.toJsonAdd());
@@ -123,7 +123,7 @@ class ControllerProductos {
   Future<bool> ValidarProducto(
       String nombreProducto, String categoriaProducto) async {
     final response = await http.get(Uri.parse(
-        "https://electrobike-adso.000webhostapp.com/apiElectrobike_app/productos/validarRepetidos.php?nombreProducto=$nombreProducto&categoriaProducto=$categoriaProducto"));
+        "https://electrobike-adso-wild.000webhostapp.com/controllers/productos/Movil/validarRepetidosMovil.php?nombreProducto=$nombreProducto&categoriaProducto=$categoriaProducto"));
         // "http://192.168.0.4/apiElectrobike_app/productos/validarRepetidos.php?nombreProducto=$nombreProducto&categoriaProducto=$categoriaProducto"));
     if (response.statusCode == 200) {
       var data = json.decode(response.body);
@@ -136,7 +136,7 @@ class ControllerProductos {
   // Metodo para actualizar productos
   Future<String> updateProducto(ModeloProducto ModeloProducto) async {
     String actualizar_productos =
-        "https://electrobike-adso.000webhostapp.com/apiElectrobike_app/productos/actualizarProductos.php";
+        "https://electrobike-adso-wild.000webhostapp.com/controllers/productos/Movil/actualizarProductosMovil.php";
         // "http://192.168.0.4/apiElectrobike_app/productos/actualizarProductos.php";
     final response = await http.post(Uri.parse(actualizar_productos),
         body: ModeloProducto.toJsonUpdate());
@@ -151,7 +151,7 @@ class ControllerProductos {
   Future<bool> ValidarRepetidosActualizar(String idProducto,
       String nombreProducto, String categoriaProducto) async {
     final response = await http.get(Uri.parse(
-        "https://electrobike-adso.000webhostapp.com/apiElectrobike_app/productos/validarActualizar.php?idProducto=$idProducto&nombreProducto=$nombreProducto&categoriaProducto=$categoriaProducto"
+        "https://electrobike-adso-wild.000webhostapp.com/controllers/productos/Movil/validarActualizarMovil.php?idProducto=$idProducto&nombreProducto=$nombreProducto&categoriaProducto=$categoriaProducto"
         // "http://192.168.0.4/apiElectrobike_app/productos/validarActualizar.php?idProducto=$idProducto&nombreProducto=$nombreProducto&categoriaProducto=$categoriaProducto"
         
         ));
@@ -167,7 +167,7 @@ class ControllerProductos {
   Future<bool> ValidarEliminar(int idProducto) async {
     try {
     final response = await http.get(Uri.parse(
-      "https://electrobike-adso.000webhostapp.com/apiElectrobike_app/productos/validarEliminar.php?idProducto=$idProducto"
+      "https://electrobike-adso-wild.000webhostapp.com/controllers/productos/Movil/validarEliminarMovil.php?idProducto=$idProducto"
       // "http://192.168.0.4/apiElectrobike_app/productos/validarEliminar.php?idProducto=$idProducto"
       
       ));
@@ -189,7 +189,7 @@ class ControllerProductos {
   Future<bool> eliminarProducto(int idProducto) async {
     try {
     final response = await http.get(Uri.parse(
-      "https://electrobike-adso.000webhostapp.com/apiElectrobike_app/productos/eliminarProducto.php?idProducto=$idProducto"
+      "https://electrobike-adso-wild.000webhostapp.com/controllers/productos/Movil/eliminarProductoMovil.php?idProducto=$idProducto"
       // "http://192.168.0.4/apiElectrobike_app/productos/eliminarProducto.php?idProducto=$idProducto"
       
       ));

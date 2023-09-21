@@ -5,7 +5,7 @@ class ControllerContrasena {
   // Metodo recuperar contraseña
   Future<Map<String, dynamic>> recuperarContrasena(String email) async {
     final url = Uri.parse(
-      'https://electrobike-adso.000webhostapp.com/apiElectrobike_app/contrasena/recuperarContrasena.php'
+      'https://electrobike-adso-wild.000webhostapp.com/controllers/contrasena/recuperarContrasena.php'
       // 'http://192.168.0.4/apiElectrobike_app/contrasena/recuperarContrasena.php'
       
       );
@@ -26,7 +26,7 @@ class ControllerContrasena {
     
   Future<Map<String, dynamic>> nuevaContrasena(String email, String nuevaContrasena, String confirmarContrasena) async {
     final url = Uri.parse(
-      'https://electrobike-adso.000webhostapp.com/apiElectrobike_app/contrasena/nuevaContrasena.php'
+      'https://electrobike-adso-wild.000webhostapp.com/controllers/contrasena/nuevaContrasena.php'
       // 'http://192.168.0.4/apiElectrobike_app/contrasena/nuevaContrasena.php'
     );
   
@@ -51,7 +51,7 @@ class ControllerContrasena {
    // Validar que el documento no exista al momento de actualizar
   Future<bool> validarCorreoExisten( String correoUsuario) async {
     final response = await http.get(Uri.parse(
-        "https://electrobike-adso.000webhostapp.com/apiElectrobike_app/contrasena/validarCorreo.php?correoUsuario=$correoUsuario"
+        "https://electrobike-adso-wild.000webhostapp.com/controllers/contrasena/validarCorreo.php?correoUsuario=$correoUsuario"
         // "http://192.168.0.4/apiElectrobike_app/contrasena/validarCorreo.php?correoUsuario=$correoUsuario"
         
         ));
